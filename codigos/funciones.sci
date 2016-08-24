@@ -79,13 +79,18 @@ function [chi,eta] = mapear_cuad_2D(punto, C)
         A = a(4)*b(3) - a(3)*b(4);
         B = ( y0*a(4) + a(2)*b(3) ) - ( x0*b(4) + a(3)*b(2) ) ;
         K = y0*a(2) - x0*b(2) ;
-        
-        disc = B*B - 4*A*K ;
-        if (disc<0) then
-            eta = -99;
-            chi = -99;
+
+        if (A ~= 0) then
+            disc = B*B - 4*A*K ;
+            if (disc<0) then
+                eta = -99;
+                chi = -99;
+            else
+                eta = (-B + sqrt(disc) ) / (2*A) ;
+                chi = ( -(x0 + a(3)*eta) )/(a(2) + a(4)*eta )  ;
+            end
         else
-            eta = (-B + sqrt(disc) ) / (2*A) ;
+            eta = -K/B;
             chi = ( -(x0 + a(3)*eta) )/(a(2) + a(4)*eta )  ;
         end
     end
@@ -102,8 +107,6 @@ function r = verificar_tri_2D(punto , T)
     elseif((chi==1 & eta==0)|(chi==0 & eta==1))  //VERIFICAR SI EL PUNTO (punto) ES UN NODO (osea, si es una fila de T))
         r=1;
     else
-        disp("chi="+string(chi));
-        disp("eta="+string(eta));
         r = ( 1 - chi - eta) / abs(1 - chi - eta);
     end
 endfunction
