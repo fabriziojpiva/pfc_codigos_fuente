@@ -4,7 +4,7 @@ clear all;
 DIR = get_absolute_file_path("graficar_malla.m") ;
 load( DIR +"mallas.sod");
 
-getd(DIR);
+//getd(DIR);
 
  mtlb_axis([0, 6, 0, 6]); 
  xtitle("Interfaz","x","y");
@@ -18,5 +18,3 @@ end
 for k=1:size(dominio2,1)
     plot( dominio2(k,:) ,imagen2(k,:) , 'b') ;
 end
- 
-      

@@ -1,4 +1,6 @@
-
+clc;
+clear all;
+close;
 //Funcion para pre-plotear las mallas, donde entran las matrices de la malla y salen todas las rectas a plotear para visualizar el mallado
 function [X,Y] = procesar_malla_2D(xnode, icone)   
     nelementos =  size( icone,1 ) ;
@@ -29,13 +31,13 @@ function [X,Y] = procesar_malla_2D(xnode, icone)
     end
 endfunction
 
-function r = cruz (u , v)
-    r = [ u(1,2)*v(1,3) - u(1,3)*v(1,2) , u(1,3)*v(1,1) - u(1,1)*v(1,3) , u(1,1)*v(1,2) - u(1,2)*v(1,1) ] ;
-endfunction
+//function r = cruz (u , v)
+//    r = [ u(1,2)*v(1,3) - u(1,3)*v(1,2) , u(1,3)*v(1,1) - u(1,1)*v(1,3) , u(1,1)*v(1,2) - u(1,2)*v(1,1) ] ;
+//endfunction
 
-function [chi,eta] = mapear_triangulo_2D(punto, T) //esta funcion mapea un punto de un triangulo al elemento master del triángulo.
+function [chi,eta] = mapear_tri_2D(punto, T) //esta funcion mapea un punto de un triangulo al elemento master del triángulo.
     x = punto(1,1);
-    y = punto(1,2);
+    y = punto(2,1);
     x1 = T(1,1);
     x2 = T(2,1);
     x3 = T(3,1);
@@ -53,7 +55,8 @@ function [chi,eta] = mapear_triangulo_2D(punto, T) //esta funcion mapea un punto
     eta = N3_xy;
 endfunction
 
-function [chi,eta] = mapear_cuadrado_2D(punto, C) //esta funcion mapea un punto de un triangulo al elemento master del triángulo.
+// mapeo de un punto en coordenadas (x,y) al elemento master da coordenadas (chi,eta) donde (chi,eta) pertenece a [-1,1]
+function [chi,eta] = mapear_cuad_2D(punto, C) 
     p1 = [C(1,:) ]';
     p2 = [C(2,:) ]';
     p3 = [C(3,:) ]';
@@ -89,12 +92,74 @@ function [chi,eta] = mapear_cuadrado_2D(punto, C) //esta funcion mapea un punto 
    
 endfunction
 
-function r = verificar_triangulo_2D(punto , T) // verifica si un punto está o no dentro del triángulo, utilizando elemento master para abaratar el costo computacional
-    
-    [chi,eta] = mapear_triangulo_2D(punto , T);
-    if chi<0 | eta<0 | chi>1 | eta>1 then
+// verifica si un punto está o no dentro del triángulo, utilizando elemento master para abaratar el costo computacional
+// si 'punto' no pertenece al Triangulo T
+function r = verificar_tri_2D(punto , T) 
+    ////////////////////////////////////////////////////////////////// CAMBIOS!
+    [chi,eta] = mapear_tri_2D(punto , T);
+    if (chi<0 | eta<0 | chi>1 | eta>1 )
         r = -1 ;
+    elseif((chi==1 & eta==0)|(chi==0 & eta==1))  //VERIFICAR SI EL PUNTO (punto) ES UN NODO (osea, si es una fila de T))
+        r=1;
     else
+        disp("chi="+string(chi));
+        disp("eta="+string(eta));
         r = ( 1 - chi - eta) / abs(1 - chi - eta);
     end
 endfunction
+
+function r=verificar_cuad_2D(punto, C)
+    [chi,eta] = mapear_cuad_2D(punto , C);
+    r=1;
+    if(chi<-1 | eta<-1 | chi>1 | eta>1)
+        r=-1;
+    end
+endfunction
+
+
+//Funcion que verifica si el punto pertenece al elemento de nodos-coordenados como M=[x1 y1; x2 y2; x3 y3] si el elemento_es_un_triangulo.
+function r=verificar_2D(punto, M)
+    n=size(M,1); //extraer cantidad de filas.
+    if(n==3)
+        r=verificar_tri_2D(punto,M);
+    end
+    
+    if(n==4)
+        r=verificar_cuad_2D(punto,M);
+    end
+endfunction
+
+function valor=interpolar(punto, M, valores)
+    n=length(M(:,1));
+    // En caso de ser un triangulo, se interpolan los estados utilizando las correspondientes funciones de forma del traingulo master= N1;N2;N3.
+    valor=[];
+    if(n==3)
+        [chi,eta]=mapear_tri_2D(punto,M);
+        valor=[1-chi-eta, eta, chi]*valores;
+    end
+    // En caso de ser un cuadrilatero, se interpolan los estados utilizando las funciones de forma del cuadrilatero master= N1;N2;N3;N4.
+    if(n==4)
+        [chi,eta]=mapear_cuad_2D(punto,M);
+        valor=.25*[(1-eta)*(1-chi), (1-eta)*(1+chi), (1+eta)*(1-chi), (1+eta)*(1+chi)]*valores;
+    end
+endfunction
+
+
+// indices_nodos=indices de los nodos que conforman un elemento dado. Vector fila.
+// estados_conocidos=base de datos donde se almacenan los estados conocidos (primer columna contiene el indice del nodo al cual se le asignan los estados)
+// v=matriz donde cada fila es un estado-vector
+function v=buscar_estado(indices_nodos,estados_conocidos)
+    n=length(estados_conocidos(:,1));
+    m=length(indices_nodos(1,:));
+    v=[];
+    for i=1:m
+        for j=1:n
+            if(estados_conocidos(j,1)==indices_nodos(1,i))
+                v=[v;estados_conocidos(j,2:$)'];
+            end
+        end
+    end
+endfunction
+
+
+

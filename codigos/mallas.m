@@ -1,3 +1,4 @@
+
 xnode1 = [1 1 0;
          2 1 0;
          3 1 0;
@@ -75,6 +76,7 @@ icone3 = [1 2 9;
           9 10 8;
           1 9 8
             ];
-estados3  = [ [1:size(xnode3,1)]' , ones(size(xnode3,1),1)*3 ];
+// estados3 MODIFICADO PARA QUE SEA MALLA CONOCIDA CON FUNCION SIN(X*Y).
+estados3  = [ [1:size(xnode3,1)]' , ones(size(xnode3,1),1).*sin(xnode3(:,1).*xnode3(:,2)) ];
 DIR = get_absolute_file_path("mallas.m") ;
 save(DIR + "mallas.sod");
