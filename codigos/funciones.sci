@@ -31,9 +31,9 @@ function [X,Y] = procesar_malla_2D(xnode, icone)
     end
 endfunction
 
-//function r = cruz (u , v)
-//    r = [ u(1,2)*v(1,3) - u(1,3)*v(1,2) , u(1,3)*v(1,1) - u(1,1)*v(1,3) , u(1,1)*v(1,2) - u(1,2)*v(1,1) ] ;
-//endfunction
+function r = cruz (u , v)
+    r = [ u(1,2)*v(1,3) - u(1,3)*v(1,2) , u(1,3)*v(1,1) - u(1,1)*v(1,3) , u(1,1)*v(1,2) - u(1,2)*v(1,1) ] ;
+endfunction
 
 function [chi,eta] = mapear_tri_2D(punto, T) //esta funcion mapea un punto de un triangulo al elemento master del triángulo.
     x = punto(1,1);
@@ -138,12 +138,12 @@ function valor=interpolar(punto, M, valores)
     valor=[];
     if(n==3)
         [chi,eta]=mapear_tri_2D(punto,M);
-        valor=[1-chi-eta, eta, chi]*valores;
+        valor=[1-chi-eta, chi, eta]*valores;
     end
     // En caso de ser un cuadrilatero, se interpolan los estados utilizando las funciones de forma del cuadrilatero master= N1;N2;N3;N4.
     if(n==4)
         [chi,eta]=mapear_cuad_2D(punto,M);
-        valor=.25*[(1-eta)*(1-chi), (1-eta)*(1+chi), (1+eta)*(1-chi), (1+eta)*(1+chi)]*valores;
+        valor=.25*[(1-eta)*(1-chi), (1-eta)*(1+chi), (1+eta)*(1+chi),(1+eta)*(1-chi) ]*valores;
     end
 endfunction
 

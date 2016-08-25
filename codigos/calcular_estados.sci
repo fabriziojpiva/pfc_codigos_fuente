@@ -58,7 +58,7 @@ for k=1:size(dominio2,1)
 end
 
 
-estados=calcular_estado(icone3,xnode3,estados3,xnode2,estados2);
+estados=calcular_estado(icone2,xnode2,estados2,xnode3,estados3);
 
 
 
