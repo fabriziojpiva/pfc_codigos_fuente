@@ -1,7 +1,7 @@
 clc;
 clear all;
 
-DIR = get_absolute_file_path("graficar_malla.m") ;
+DIR = get_absolute_file_path("graficar_malla.sci") ;
 load( DIR +"mallas.sod");
 
 //getd(DIR);
