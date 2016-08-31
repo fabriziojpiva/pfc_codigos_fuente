@@ -62,8 +62,7 @@ xnode3 = [1 0.5 0;
           1.5 1.5 0;
           2 1.5 0 ;
           3 1.5 0
- 
-];
+            ];
 icone3 = [1 2 9;
           2 3 9;
           3 11 9;
@@ -78,5 +77,45 @@ icone3 = [1 2 9;
             ];
 // estados3 MODIFICADO PARA QUE SEA MALLA CONOCIDA CON FUNCION SIN(X*Y).
 estados2  = [ [1:size(xnode2,1)]' , ( 0.5*xnode2(:,1)+xnode2(:,2)) ];
-DIR = get_absolute_file_path("mallas.m") ;
+
+xnode4=[1.5 4 0;
+        2.5 6 0;
+        4.5 7 0;
+        5.5 7 0;
+        7.5 8 0;
+        8.5 8 0;
+        9   8 0;
+        11.5 9.5 0
+        ];
+        
+icone4=[1 2;
+        2 3;
+        3 4;
+        4 5;
+        5 6;
+        6 7;
+        ];
+
+estados4  = [ [1:size(xnode4,1)]' , ones(size(xnode4,1),1).*(-1) ];
+
+xnode5=[ 1 1 0;
+         2 2.5 0;
+         3.5 3.5 0;
+         4.5 4 0;
+         7 5 0;
+         8.5 5.5 0;
+         10 5.5 0
+         ];
+         
+icone5=[1 2;
+        2 3;
+        3 4;
+        4 5;
+        5 6;
+        6 7
+        ];
+
+estados5  = [ [1:size(xnode5,1)]' , ones(size(xnode5,1),1).*100 ];
+
+DIR = get_absolute_file_path("mallas.sci") ;
 save(DIR + "mallas.sod");

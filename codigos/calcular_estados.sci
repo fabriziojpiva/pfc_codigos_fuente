@@ -30,6 +30,11 @@ function estados=calcular_estado(icone_conocido,xnode_conocido,estados_conocidos
             // punto es el nodo de la malla con estados desconocidos.
             // X es el conjunto de coordenadas de los nodos, ya sea de triangulo (matriz de 3x2) o cuadrilatero (matriz de 4x2)
             verificacion=verificar_2D(punto,X);
+            disp(string(j)+":");
+            disp("punto:");
+            disp(string(punto));
+            disp("Matriz:"+string(X));
+            disp(verificacion);
             j=j+1;
         end
         // buscar estado en estados_conocidos.
@@ -44,10 +49,10 @@ endfunction
 
 
 
- mtlb_axis([0, 6, 0, 6]); 
+ mtlb_axis([0, 10, 0, 10]); 
  xtitle("Interfaz","x","y");
-[dominio1,imagen1] = procesar_malla_2D(xnode3 , icone3);
-[dominio2,imagen2] = procesar_malla_2D(xnode2 , icone2);
+[dominio1,imagen1] = procesar_malla_2D(xnode4 , icone4);
+[dominio2,imagen2] = procesar_malla_2D(xnode5 , icone5);
 
 for k=1:size(dominio1,1)
     plot( dominio1(k,:) ,imagen1(k,:) , 'r') ;
@@ -58,8 +63,15 @@ for k=1:size(dominio2,1)
 end
 
 
-estados=calcular_estado(icone2,xnode2,estados2,xnode3,estados3);
+estados=calcular_estado(icone5,xnode5,estados5,xnode4,estados4);
 
 
-
-
+//p1=[0;3];
+//p2=[2;3];
+//p3=[4;3];
+//
+//M=[1 1; 3 2];
+//
+//r1=verificar_seg_2D(p1,M);
+//r2=verificar_seg_2D(p2,M);
+//r3=verificar_seg_2D(p3,M);

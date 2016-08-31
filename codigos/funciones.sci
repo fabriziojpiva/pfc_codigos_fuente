@@ -120,28 +120,52 @@ function r=verificar_cuad_2D(punto, C)
 endfunction
 
 
+function r=verificar_seg_2D(punto,M)
+    r=-1;
+    v=punto'-M(1,:); // v es vector fila. Es el vector que va desde P1 hasta el punto en cuestion.
+    dif=M(2,:)-M(1,:);
+    u=dif./norm(dif,2);
+    alpha=v*u';
+    if(alpha<norm(dif,2) & alpha>=0) 
+        r=1;
+    end
+endfunction
+
+
+
 //Funcion que verifica si el punto pertenece al elemento de nodos-coordenados como M=[x1 y1; x2 y2; x3 y3] si el elemento_es_un_triangulo.
 function r=verificar_2D(punto, M)
     n=size(M,1); //extraer cantidad de filas.
-    if(n==3)
+    select(n)
+    case (2) then
+        r=verificar_seg_2D(punto,M);
+    case (3) then
         r=verificar_tri_2D(punto,M);
-    end
     
-    if(n==4)
+    case (4) then
         r=verificar_cuad_2D(punto,M);
     end
+    
 endfunction
 
 function valor=interpolar(punto, M, valores)
     n=length(M(:,1));
     // En caso de ser un triangulo, se interpolan los estados utilizando las correspondientes funciones de forma del traingulo master= N1;N2;N3.
     valor=[];
-    if(n==3)
+    select(n)
+    case (2) then
+        // se realiza la interpolacion en 1D dentro del segmento
+        v=punto'-M(1,:); // v es vector fila. Es el vector que va desde P1 hasta el punto en cuestion.
+        dif=M(2,:)-M(1,:);
+        L_seg=norm(dif,2);
+        u=dif./L_seg;
+        alpha=(v*u')/L_seg;
+        valor=[(1-alpha), alpha]*valores;
+    case(3) then
         [chi,eta]=mapear_tri_2D(punto,M);
         valor=[1-chi-eta, chi, eta]*valores;
-    end
-    // En caso de ser un cuadrilatero, se interpolan los estados utilizando las funciones de forma del cuadrilatero master= N1;N2;N3;N4.
-    if(n==4)
+    case(4)
+        // En caso de ser un cuadrilatero, se interpolan los estados utilizando las funciones de forma del cuadrilatero master= N1;N2;N3;N4.
         [chi,eta]=mapear_cuad_2D(punto,M);
         valor=.25*[(1-eta)*(1-chi), (1-eta)*(1+chi), (1+eta)*(1+chi),(1+eta)*(1-chi) ]*valores;
     end
