@@ -8,8 +8,8 @@ load( DIR +"mallas.sod");
 
  mtlb_axis([0, 6, 0, 6]); 
  xtitle("Interfaz","x","y");
-[dominio1,imagen1] = procesar_malla_2D(xnode1 , icone1);
-[dominio2,imagen2] = procesar_malla_2D(xnode2 , icone2);
+[dominio1,imagen1] = procesar_malla_2D(xnode2 , icone2);
+[dominio2,imagen2] = procesar_malla_2D(xnode3 , icone3);
 
 for k=1:size(dominio1,1)
     plot( dominio1(k,:) ,imagen1(k,:) , 'r') ;

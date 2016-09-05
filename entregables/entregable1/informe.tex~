@@ -1,0 +1,421 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% University Assignment Title Page 
+% LaTeX Template
+% Version 1.0 (27/12/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% WikiBooks (http://en.wikibooks.org/wiki/LaTeX/Title_Creation)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+% 
+% Instructions for using this template:
+% This title page is capable of being compiled as is. This is not useful for 
+% including it in another document. To do this, you have two options: 
+%
+% 1) Copy/paste everything between \begin{document} and \end{document} 
+% starting at \begin{titlepage} and paste this into another LaTeX file where you 
+% want your title page.
+% OR
+% 2) Remove everything outside the \begin{titlepage} and \end{titlepage} and 
+% move this file to the same directory as the LaTeX file you wish to add it to. 
+% Then add \input{./title_page_1.tex} to your LaTeX file where you want your
+% title page.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\title{Title page with logo}
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[12pt]{article}
+\usepackage[spanish]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{float} %Este paquete es para que se usen los entornos de las tablas, de modo que se puedan fijar en alguna posición en particular.
+\usepackage{hyperref} %Este paquete es para poder insertar hipervínculos en el documento, como por ejemplo direcciones de e-mail.
+\usepackage{textcomp} %Paquete para poner los logotipos de registrado,copyright, etc.
+\usepackage{listings} %Paquete para los códigos en cualquier lenguage.
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{eufrak}
+                      
+\begin{document}
+
+\begin{titlepage}
+
+  \newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for the horizontal lines, change thickness here
+
+  \center % Center everything on the page
+ 
+  % ----------------------------------------------------------------------------------------
+  % HEADING SECTIONS
+  % ----------------------------------------------------------------------------------------
+
+  \textsc{\LARGE Universidad Nacional del
+    Litoral}\\[1.5cm] % Name of your university/college
+  \textsc{\Large Facultad de Ingeniería y Ciencias Hídricas
+  }\\[0.5cm] % Major heading such as course name
+  \textsc{\large Cálculo Paralelo
+    2016}\\[0.5cm] % Minor heading such as course title
+
+  % ----------------------------------------------------------------------------------------
+  % TITLE SECTION
+  % ----------------------------------------------------------------------------------------
+
+  \HRule \\[0.4cm]
+  { \huge \bfseries Trabajo Práctico N°2:
+    Métodos numéricos y Optimización de memoria}\\[0.4cm] % Title of your document
+  \HRule \\[1.5cm]
+ 
+  % ----------------------------------------------------------------------------------------
+  % AUTHOR SECTION
+  % ----------------------------------------------------------------------------------------
+
+  \begin{minipage}{0.4\textwidth}
+    \begin{flushleft} \large
+      \emph{Autor:}\\
+      Fabrizio J. \textsc{Piva} % Your name
+    \end{flushleft}
+  \end{minipage}
+  ~
+  \begin{minipage}{0.4\textwidth}
+    \begin{flushright} \large
+      \emph{Profesor:} \\
+      Victorio \textsc{Songzoni} % Supervisor's Name
+    \end{flushright}
+  \end{minipage}\\[2cm]
+
+  % If you don't want a supervisor, uncomment the two lines below and
+  % remove the section above
+  % \Large \emph{Author:}\\
+  % John \textsc{Smith}\\[3cm] % Your name
+
+  % ----------------------------------------------------------------------------------------
+  % DATE SECTION
+  % ----------------------------------------------------------------------------------------
+
+  {\large
+    \today}\\[2cm] % Date, change the \today to a set date if you want to be precise
+  
+  % ----------------------------------------------------------------------------------------
+  % LOGO SECTION
+  % ----------------------------------------------------------------------------------------
+  \begin{center}
+    \includegraphics[width=0.30\textwidth]{logo_unl.eps}\\[1cm] % Include a department/university logo - this will require the graphicx package
+  \end{center}
+  % ----------------------------------------------------------------------------------------
+
+  \vfill % Fill the rest of the page with whitespace
+
+\end{titlepage}
+
+\begin{abstract}
+  El presente documento es un breve informe acerca de las actividades
+  propuestas en el trabajo práctico número 2, el cual consiste, en
+  pocas palabras, en desarrollar un conjunto de algoritmos para luego
+  efectuar las modificaciones correspondientes con el propósito de
+  mejorar el desempeño y bajar el tiempo de ejecución.
+\end{abstract}
+
+\section{Introducción}
+
+Este informe tiene como objetivo desarrollar y mejorar el algoritmo de
+multiplicación de matrices, e implementar otro algoritmo que permita
+poner en evidencia la técnica  de desenrollado de ciclos. Para el algoritmo de multiplicación
+de matrices, se pide modificarlo dos veces de tal manera que el ciclo
+interno sea el que barre las filas, y luego hacer lo mismo pero que el
+ciclo interno sea el que barre las columnas.
+
+Para poder utilizar el método de desenrollado de ciclos, en primer
+lugar se desarrollará un algoritmo simple para resolver un determinado
+problema, y luego se modificará el mismo aplicando la técnica
+anteriormente mencionada con el objetivo de poder comparar los tiempos
+de ejecución de ambos códigos.
+
+\section{Algoritmo de multiplicación de matrices}
+\label{sec:matrices}
+
+Para realizar el algoritmo, basicamente debemos recordar que el
+producto de dos matrices $A_{mxn}$ y $B_{nxp}$ dan como resultado una matriz
+$C_{mxp}$, donde:
+
+\begin{equation}
+  c_{i,j} = \sum_{k=0}^n a_{i,k} \cdot b_{k,j} 
+\end{equation}
+
+Teniendo en cuenta lo anteriormente mencionado, y considerando que se
+utilizó la librería Eigen para facilitar la indexación y llenado de
+matrices, en C++ puede traducirse como:
+
+\lstset{language=C++, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+  #include <iostream>
+  #include <Eigen/Dense>
+  #include <time.h>
+
+  using namespace Eigen;
+  using namespace std;
+
+  MatrixXf  multiplicar_matrices( const MatrixXf &A,const MatrixXf &B ){
+
+  int nfilas = A.rows();
+  int ncols = B.cols();
+  int limk = A.cols();
+  MatrixXf C = MatrixXf::Zero(nfilas, ncols );
+  
+  for (int i=0;i<nfilas ; ++i){
+    for (int j=0; j<ncols ; ++j) {
+      for (int k=0; k<limk ; ++k) {
+	C(i,j) += A(i,k)*B(k,j);
+      }  
+    }
+  }
+ return C;
+}
+
+\end{lstlisting}
+
+Consideremos que para todo este ejercicio, utilizaremos como prueba
+dos matrices de 3x3. Entonces cuando ejecutamos este algoritmo,  el
+tiempo de ejecución es de $1.2\cdot10^{-5}$ segundos. En las
+siguientes subsecciones veremos si este resultado mejora alterando el
+orden de los lazos. 
+
+\subsection{Modificación 1: lazo interno recorre las filas}
+\label{sec:matricesv1}
+
+Esta modificación consiste básicamente en cambiar el algoritmo
+estándar de multiplicación de matrices para que el lazo interno sea
+aquel que recorre el índice de filas. Esto en C++ puede ponerse en
+práctica simplemente alterando el orden de los ciclos \emph{for}, como
+se muestra en la función \emph{multiplicacion\_matrices\_v1}:
+
+\lstset{language=C++, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+
+  MatrixXf  multiplicar_matrices_v1( const MatrixXf &A,const MatrixXf &B ){
+
+  int nfilas = A.rows();
+  int ncols = B.cols();
+  int limk = A.cols();
+  MatrixXf C = MatrixXf::Zero(nfilas, ncols );
+ 
+  for (int j=0; j<ncols ; ++j) {
+    for (int k=0; k<limk ; ++k) {
+      for (int i=0; i<nfilas ; ++i) {
+        C(i,j) += A(i,k)*B(k,j);
+      }  
+    }
+  }
+  return C;
+  }
+
+\end{lstlisting}
+
+Prestar especialmente atención, que si comparamos el algoritmo
+estándar con esta \emph{version 1}, vemos claramente que en esta nueva
+versión el lazo interno recorre las filas. Esta modificación produce
+un impacto significativo en el tiempo de ejecución, ya que para esta
+nueva versión es de $9\cdot10^{-06}$ segundos.
+
+\subsection{Modificación 2: lazo interno recorre las columnas}
+\label{sec:matricesv2}
+
+Esta última modificación consiste básicamente en cambiar el algoritmo
+estándar de multiplicación de matrices para que el lazo interno sea
+aquel que recorre el índice de columnas. Como ya se mencionó en la
+sección \ref{sec:matricesv1}, alterando los ciclos \emph{for} se
+obtiene la función \emph{multiplicacion\_matrices\_v2}:
+
+\lstset{language=C++, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+
+MatrixXf  multiplicar_matrices_v2( const MatrixXf &A,const MatrixXf &B){
+								 
+  int nfilas = A.rows();
+  int ncols = B.cols();
+  int limk = A.cols();
+  MatrixXf C = MatrixXf::Zero(nfilas, ncols );
+ 
+  for (int i=0; i<nfilas ; ++i) {
+    for (int k=0; k<limk ; ++k) {
+      for (int j=0; j<ncols ; ++j) {
+	C(i,j) += A(i,k)*B(k,j);
+      }  
+    }
+  }
+ return C;
+}
+
+\end{lstlisting}
+
+Asimismo, esta versión que coloca el lazo interno que recorra las
+columnas, produce un impacto significativo en el tiempo de ejecución
+si lo comparamos con el del algoritmo de multiplicación estándar, ya que
+para esta nueva versión es de $9\cdot10^{-06}$ segundos.
+
+\section{Aplicación de desenrollado de ciclos}
+\label{sec:desenrollado}
+
+En esta sección se pondrá en manifiesto como aplicar la técnica de
+desenrollado de ciclos en un algoritmo. La misma consiste en, dado un
+ciclo iterativo común y corriente, disminuir la cantidad de
+repeticiones mediante la codificación explícita de algunas o todas las
+iteraciones. Esta técnica produce una mejora significativa en el
+tiempo de ejecución del algoritmo, como lo veremos en el siguiente
+ejemplo.
+
+Supongamos que tenemos una matriz de Nx3, donde cada fila contiene un
+vector en el espacio tridimensional. Ahora supongamos que necesitamos
+un algoritmo que calcule el módulo de cada vector que está almacenado
+en esta matriz, y que el resultado se almacene en un vector de
+Nx1. Este algoritmo podría implementarse en C++ de la siguiente
+manera:
+
+\lstset{language=C++, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+
+#include <iostream>
+#include <Eigen/Dense>
+#include <time.h>
+
+using namespace Eigen;
+using namespace std;
+
+VectorXf modulos_vectores (MatrixXf M){
+  int nfilas = M.rows();
+  VectorXf R = VectorXf::Zero(nfilas,1);
+  
+  for (int i=0; i< nfilas; ++i){
+    for (int j=0; j<3 ; ++j) {
+      R(i,0) += M(i,j)*M(i,j);
+    }
+    R(i,0) = sqrt(R(i,0) );
+  }
+  return R;
+}
+
+\end{lstlisting}
+ 
+Para aplicar el método de desenrollado de ciclos, podríamos
+deshacernos del ciclo interno simplemente escribiendolo de manera
+explícita como se hizo en la función
+\emph{modulos\_vectores\_desenrollado}:
+
+\lstset{language=C++, breaklines=true, basicstyle=\footnotesize}
+\begin{lstlisting}[frame=single]
+
+VectorXf modulos_vectores_desenrollado (MatrixXf M){
+  int nfilas = M.rows();
+  VectorXf R = VectorXf::Zero(nfilas,1);
+  
+  for (int i=0; i< nfilas; ++i){
+      R(i,0) = M(i,0)*M(i,0) + M(i,1)*M(i,1) + M(i,2)*M(i,2);
+      R(i,0) = sqrt( R(i,0) );
+    }
+
+  return R;
+}
+
+\end{lstlisting}
+
+A continuación se hará una prueba comparativa de estos dos algoritmos,
+con matrices de tamaño 10, 100, y 1000. Los resultados de los tiempos
+de ejecución pueden verse en la tabla \ref{tab:resultados}, donde
+podemos observar que el desenrollado tiene un desempeño
+notablemente mejor considerando el tiempo de ejecución.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{l|r}
+    Sin desenrollado & Con desenrollado \\\hline
+    1.9E-05 & 1E-05 \\
+    1.13E-04 & 8.1E-05 \\
+    8.71E-04 & 6.57E-04
+  \end{tabular}
+  \caption{\label{tab:resultados}Tabla comparativa de tiempos de
+    ejecución en segundos.}
+\end{table}
+
+\section{Conclusiones}
+
+Haciendo un análisis de los resultados obtenidos en las secciones
+\ref{sec:matrices} y \ref{sec:desenrollado} podemos concluir que las
+técnicas de reordenamiento y desenrollado de ciclos son muy útiles a
+la hora de programar, ya que en este informe se ha puesto en evidencia
+mediante sencillos ejemplos que los tiempos de ejecución mejoran
+notablemente cuando se utilizan las mismas. Además, estos tiempos de
+ejecución podrían mejorarse aun mas si se aplicaran ambas técnicas de
+manera simultánea o si se complementaran con otras técnicas que se han
+visto a lo largo de esta unidad temática.
+
+ \end{document}
+
+
+% \begin{figure}
+ %   \centering
+%   \includegraphics[width=1.0\textwidth]{resultados.eps}
+%   \caption{\label{fig:reporte-ORNL}Reporte a enviar a la ORNL: ejemplo
+%   1000d}
+% \end{figure}
+
+% \subsection{Tables and Figures}
+
+% Use the table and tabular commands for basic tables --- see
+% Table~\ref{tab:widgets}, for example. You can upload a figure (JPEG,
+% PNG or PDF) using the files menu. To include it in your document,
+% use the includegraphics command as in the code for
+% Figure~\ref{fig:frog} below.
+
+% % % Commands to include a figure:
+% % \begin{figure}
+% % \centering
+% % \includegraphics[width=0.5\textwidth,natwidth=399,natheight=356]{curva.jpg}
+% % \caption{\label{fig:frog}This is a figure caption.}
+% % \end{figure}
+
+% % \begin{table}
+% % \centering
+% % \begin{tabular}{l|r}
+% % Item & Quantity \\\hline
+% % Widgets & 42 \\
+% % Gadgets & 13
+% % \end{tabular}
+% % \caption{\label{tab:widgets}An example table.}
+% % \end{table}
+
+% \subsection{Matematicas}
+
+% \LaTeX{} is great at typesetting mathematics. Let $X_1, X_2, \ldots,
+% X_n$ be a sequence of independent and identically distributed random
+% variables with $\text{E}[X_i] = \mu$ and $\text{Var}[X_i] = \sigma^2
+% < \infty$, and let
+% $$S_n = \frac{X_1 + X_2 + \cdots + X_n}{n}
+% = \frac{1}{n}\sum_{i}^{n} X_i$$ denote their mean. Then as $n$
+% approaches infinity, the random variables $\sqrt{n}(S_n - \mu)$
+% converge in distribution to a normal $\mathcal{N}(0, \sigma^2)$.
+
+% \subsection{Lists}
+
+% You can make lists with automatic numbering \dots
+
+% \begin{enumerate}
+% \item Like this,
+% \item and like this.
+% \end{enumerate}
+% \dots or bullet points \dots
+% \begin{itemize}
+% \item Like this,
+% \item and like this.
+% \end{itemize}
+
+% We hope you find write\LaTeX\ useful, and please let us know if you
+% have any feedback using the help menu above.
+
