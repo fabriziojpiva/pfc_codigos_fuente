@@ -129,109 +129,76 @@
 
 \section{Introducción}
 
-Este informe tiene como objetivo desarrollar brevemente cuales han
-sido los conocimientos adquiridos a lo largo de esta etapa, entre los
-cuales se pueden mencionar: esquemas de discretización, métodos
-numéricos, interacción fluído-estructura, conceptos de C++, entre
-otros. A lo largo del mismo, se abordarán las diferentes temáticas
-para luego finalizar con la muestra de algunos casos de prueba que
-permitan demostrar la correcta integración de todos estos temas que se
-abordaron a lo largo de esta etapa.
+Este informe tiene como objetivo desarrollar brevemente cuáles han
+sido los conocimientos adquiridos a lo largo de esta primera etapa, entre los que se pueden mencionar: esquemas de discretización, métodos
+numéricos de aproximación de funciones en $ R^n$ por interpolación, mapeos de espacios euclideos en $2-D$ a espacios afines, estructuras de datos para representar las mallas relativas a los dominios discretos, etc.. A lo largo del mismo, se abordarán las diferentes temáticas; para luego finalizar con la muestra de algunos casos de prueba que permitan demostrar la correcta integración de todas estas herramientas desarrolladas.
 
-\section{Esquemas de discretización}
-\label{sec:discretizacion}
-%-------------------- ACA QUEDÉ !!!!! --------------------
-Para realizar el algoritmo, basicamente debemos recordar que el
-producto de dos matrices $A_{mxn}$ y $B_{nxp}$ dan como resultado una matriz
-$C_{mxp}$, donde:
+\section{Interpolación de funciones-estados}
 
-\begin{equation}
-  c_{i,j} = \sum_{k=0}^n a_{i,k} \cdot b_{k,j} 
-\end{equation}
+Comenzando con el primer tema abordado en esta etapa inicial del proyecto, estudiamos la interpolación de funciones-estados $\vec{ \phi } (x,y)$ , asociados a un elemento geométrico que se encuentra definido en el plano ( $R^2$ ), tales como: triángulos o cuadiláteros.
 
-Teniendo en cuenta lo anteriormente mencionado, y considerando que se
-utilizó la librería Eigen para facilitar la indexación y llenado de
-matrices, en C++ puede traducirse como:
+\subsection{El caso del triángulo}
+\label{sec:triangulos}
+Comenzando con el caso más sencillo, supongamos que contamos con tres puntos definidos en el plano: $ \vec{P}_{1} $, $ \vec{P}_{2} $ y $ \vec{P}_{3} $ no colineales. Éstos puntos, definen un triángulo, como puede verse en Fig. 1.
+\\
+Fig1.
+%%%%%%% FIG. 1: COLOCAR FIGURA DE UN TRIÁNGULO ACA %%%%%%%%%%%%
+\\
+Además, cada uno de ellos puede contener información relativa a cualquier cantidad fisica de interés, es decir, sobre $ \vec{P}_{1} $ por ejemplo, podría encontrarse definida una cantidad vectorial cualquiera $ \vec{v}_{1}$, y para el resto de los puntos cualquier otra cantidad $ \vec{v}_{i=2,3} $. Por lo tanto, si sólo se conocen las magnitudes físicas sobre tales posiciones espaciales, ¿cómo podremos hallar la correspondiente cantidad $ \vec{v}_{p} $ a un punto $\vec{p}$ que se encuentre dentro del triángulo definido por $ \lbrace \vec{P}_{1}, \vec{P}_{2}, \vec{P}_{3}  \rbrace $? Para responder a ésto, utilizamos un método de interpolación que consiste en la utilización de coordenadas de áreas, también denominadas coordenadas baricentricas, para luego obtener $ \vec{v}_{p} $ simplemente ponderando cada $ \vec{v}_{i=1,2,3} $ de acuerdo a su posición relativa a $ \vec{p} = \lbrace x,y \rbrace $, como se muestra en la ecuación (1).
+\\
+Colocar ecuacion 1 .
+%%% colocar v=N1(P1)*+N2(P2)*v2+N3(P3)*v3 %%%%
+\\
+Las funciones de (1), $ N_{i} ( \vec{p} )$, se denominan funciones de forma y deben hallarse de tal manera que, cuando $ \vec{p} = \vec{P}_{i} $, la salida de (1) sea exactamente $\vec{v}_{i}$.\\
+Si bien es correcto trabajar con las funciones $ N_{i} ( \vec{p} )$ basadas en las coordenadas $(x,y)$, nosotros hemos decidido realizar un cambio de variables, ya que realizamos un mapeo de las coordenadas definidas en el plano $(x,y)$, hacia coordenadas $ (\xi, \eta) \in [0, 1] $. Entonces, para cualesquiera 3 puntos $ \lbrace \vec{P}_{1}, \vec{P}_{2}, \vec{P}_{3}  \rbrace $, tendremos que el mapeo nos producirá las relaciones definidas en (2).
+\\
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+Colocar las igualdades P1=[0,0]; P2=[1;0] y P3=[0;1].
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\\
+La ventaja de llevar a cabo el cambio de variables, radica en que podremos tratar a todo triángulo definido por tres puntos cualquiera, como un único triángulo estandar (denominado elemento máster), que se encuentra acotado al intervalo $ [0; 1] $. En futuras aplicaciones de ésta técnica, se hará visible con mayor facilidad la ventaja, ya que a la hora de llevar a cabo integraciones numéricas, éstas operaciones no dependerán de la forma del triángulo, sino que harán uso del elemento máster. 
+\\
+%% COLOCAR IMAGEN DE UN TRIANGULO CUALQUIERA -> ELEMENTOR MASTER
+\\
+Ahora, teniendo en cuenta (2), vemos que las coordenadas $x$ e $y$, necesitan relacionarse funcionalmente con  $\xi$ y $\eta$, y lo inverso también es cierto, es decir: $x=x( \xi, \eta)$; $y=y( \xi, \eta)$; $\xi= \xi(x,y)$ y $\eta= \eta(x,y)$. Éstas relaciones son importantes, ya que nos permiten movernos de un espacio a otro, pero por el momento estamos interesados en determinar $\xi= \xi(x,y)$ y $\eta= \eta(x,y)$, para luego evaluar las funciones de forma sobre tales expresiones. Sin profundizar en su obtención, llegamos a
+\\ 
+%% COLOCAR LA ECUACIÓN (3) PARA xi(x,y), eta(x,y).
+\\
+Por otra parte, con las consideraciones mencionadas anteriormente y sin ahondar en los pasos algebraicos necesarios, llegamos a obtener las siguientes igualdades para las funciones de forma.
+\\
+%% COLOCAR ECUACIÓN 4: EXPRESIÓN DE LAS FUNCIONES DE FORMA EN FUNCION DE x(XI,ETA) E Y(XI,ETA)
+\\
+Así, (1) se puede reescribir como sigue.
+\\
+%% COLOCAR LA EXPRESION (5): v=N1(xi,eta)P1+N2(xi,eta)P2+N3(xi,eta)P3.
+\\
 
-\lstset{language=C++, breaklines=true, basicstyle=\footnotesize}
-\begin{lstlisting}[frame=single]
-  #include <iostream>
-  #include <Eigen/Dense>
-  #include <time.h>
+Con éstas simples ecuaciones, ahora es posible determinar, cuál es el valor de la magnitud física que se desea medir sobre el punto $\vec{p}$ perteneciente al triángulo en cuestión.
+\\
+Una situación que debemos tener en cuenta es cuando el punto $\vec{p}$ no se encuentra dentro del triángulo mencionado. En primer lugar, para determinar si el punto pertenece o no a dicha figura geométrica, debemos analizar las coordenadas $\xi= \xi(x,y)$ y $\eta= \eta(x,y)$. El procedimiento de verificación, básicamente, es el siguiente: cuando $\xi$ o $\eta$ son menores que cero ya podemos descartar el hecho de que $\vec{p}$ se encuentre en el interior de triangulo; si se encuentran por encima de la recta definida por $1-\xi-\eta$ entonces tampoco pertenece al triangulo; así, en cualquier otro caso, el punto está en el interior de la figura. 
 
-  using namespace Eigen;
-  using namespace std;
 
-  MatrixXf  multiplicar_matrices( const MatrixXf &A,const MatrixXf &B ){
 
-  int nfilas = A.rows();
-  int ncols = B.cols();
-  int limk = A.cols();
-  MatrixXf C = MatrixXf::Zero(nfilas, ncols );
-  
-  for (int i=0;i<nfilas ; ++i){
-    for (int j=0; j<ncols ; ++j) {
-      for (int k=0; k<limk ; ++k) {
-	C(i,j) += A(i,k)*B(k,j);
-      }  
-    }
-  }
- return C;
-}
+\subsection{El caso del cuadrilátero}
+\label{sec:cuadrilatero}
+Como en el caso del triángulo, cuando es conocida una magnitud física sobre los vertices de un cuadrlátero dado por los puntos $ \lbrace \vec{P}_{1}, \vec{P}_{2}, \vec{P}_{3}, \vec{P}_{3}  \rbrace $, puede hallarse el valor numérico en cualquier punto del interior de la figura haciendo
+\\
+%%% ECUACION 6 v=N1(p)*v1+N2(p)*v2+N3(p)*v3+N4(p)*v4
+\\
+Como puede observarse, ésta forma de calcular $ \vec{v}_{p} $ es similar a la utilizada para el triángulo, sólo que debe añadirse un término más para contemplar la presencia de un vértice adicional.
+\\
+También, llevamos a cabo un cambio de variables, pero aquí las nuevas variables $(\xi, \eta)$ van a estar contenidas en la región cuadrada $[-1;1]$. Así, estamos mapeando un cuadrilatero de forma irregular a un cuadrado estandar de magnitud 2 en sus lados y centrado en el origen (características deseables para llevar a cabo integracion numérica mediante cuadratura Gaussiana sobre una tal región). Para poder mapear puntos definidos sobre el plano $(x,y)$ al plano $(\xi, \eta)$, es necesario resolver el sistema dado por 
+\\
+%% ECUACION 7 DE LA MUERTE
+\\
+Como la forma cerrada de $\xi= \xi(x,y)$ y $\eta= \eta(x,y)$ es algo extensa, preferimos no incluirlas para mantener la legibilidad del documento. \\
+Nuevamente, para determinar si un dado punto definido en el plano $(x,y)$ se encuentra dentro del cuadrado $[-1; 1]$, es necesario aplicar un método de verificación sencillo: básicamente, si [$(\xi$, $\eta) <  -1$] ó [$(\xi$, $\eta) >  1  $], el punto no se encuentra dentro del cuadrilátero y no deberá calcularse ninguna magnitud sobre él. En cuanto a las funciones de forma, modificadas para calcularse sobre las nuevas variables $(\xi, \eta)$, sus expresiones son.
+\\
+%% ECUACION 8 funciones de forma cuadrilatero
+\\
 
-\end{lstlisting}
 
-Consideremos que para todo este ejercicio, utilizaremos como prueba
-dos matrices de 3x3. Entonces cuando ejecutamos este algoritmo,  el
-tiempo de ejecución es de $1.2\cdot10^{-5}$ segundos. En las
-siguientes subsecciones veremos si este resultado mejora alterando el
-orden de los lazos. 
 
-\subsection{Modificación 1: lazo interno recorre las filas}
-\label{sec:matricesv1}
-
-Esta modificación consiste básicamente en cambiar el algoritmo
-estándar de multiplicación de matrices para que el lazo interno sea
-aquel que recorre el índice de filas. Esto en C++ puede ponerse en
-práctica simplemente alterando el orden de los ciclos \emph{for}, como
-se muestra en la función \emph{multiplicacion\_matrices\_v1}:
-
-\lstset{language=C++, breaklines=true, basicstyle=\footnotesize}
-\begin{lstlisting}[frame=single]
-
-  MatrixXf  multiplicar_matrices_v1( const MatrixXf &A,const MatrixXf &B ){
-
-  int nfilas = A.rows();
-  int ncols = B.cols();
-  int limk = A.cols();
-  MatrixXf C = MatrixXf::Zero(nfilas, ncols );
- 
-  for (int j=0; j<ncols ; ++j) {
-    for (int k=0; k<limk ; ++k) {
-      for (int i=0; i<nfilas ; ++i) {
-        C(i,j) += A(i,k)*B(k,j);
-      }  
-    }
-  }
-  return C;
-  }
-
-\end{lstlisting}
-
-Prestar especialmente atención, que si comparamos el algoritmo
-estándar con esta \emph{version 1}, vemos claramente que en esta nueva
-versión el lazo interno recorre las filas. Esta modificación produce
-un impacto significativo en el tiempo de ejecución, ya que para esta
-nueva versión es de $9\cdot10^{-06}$ segundos.
-
-\subsection{Modificación 2: lazo interno recorre las columnas}
-\label{sec:matricesv2}
-
-Esta última modificación consiste básicamente en cambiar el algoritmo
-estándar de multiplicación de matrices para que el lazo interno sea
-aquel que recorre el índice de columnas. Como ya se mencionó en la
-sección \ref{sec:matricesv1}, alterando los ciclos \emph{for} se
-obtiene la función \emph{multiplicacion\_matrices\_v2}:
 
 \lstset{language=C++, breaklines=true, basicstyle=\footnotesize}
 \begin{lstlisting}[frame=single]
