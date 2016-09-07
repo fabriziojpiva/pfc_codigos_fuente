@@ -1,0 +1,114 @@
+% \documentclass[12pt]{article}
+% \usepackage[spanish]{babel}
+% \usepackage[utf8x]{inputenc}
+\usepackage{amsmath}
+% \usepackage{graphicx}
+% \usepackage[colorinlistoftodos]{todonotes}
+% \usepackage{float} %Este paquete es para que se usen los entornos de las tablas, de modo que se puedan fijar en alguna posición en particular.
+% \usepackage{hyperref} %Este paquete es para poder insertar hipervínculos en el documento, como por ejemplo direcciones de e-mail.
+% \usepackage{textcomp} %Paquete para poner los logotipos de registrado,copyright, etc.
+% \usepackage{listings} %Paquete para los códigos en cualquier lenguage.
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{eufrak}
+                      
+%\begin{document}
+
+\begin{equation}
+\label{eq:combinacionlinealtrixy}  
+  \vec{v} = 
+  N_{1}(\vec{p}) \cdot \vec{v_1} + 
+  N_{2}(\vec{p}) \cdot \vec{v_2} + 
+  N_{3}(\vec{p}) \cdot \vec{v_3} 
+\end{equation}  
+
+\begin{equation}
+\label{eq:combinacionlinealcuaxy}  
+  \vec{v} = 
+  N_{1}(\vec{p}) \cdot \vec{v_1} + 
+  N_{2}(\vec{p}) \cdot \vec{v_2} + 
+  N_{3}(\vec{p}) \cdot \vec{v_3} +  
+  N_{4}(\vec{p}) \cdot \vec{v_4} 
+\end{equation}  
+
+\begin{equation}
+  \label{eq:verticesmastertri}
+  \vec{P_1} \rightarrow 
+  \begin{bmatrix}
+    0\\ 
+    0
+  \end{bmatrix}\quad \vec{P_2} \rightarrow
+  \begin{bmatrix}
+    1\\
+    0
+  \end{bmatrix}\quad \vec{P_3} \rightarrow
+  \begin{bmatrix}
+    0\\
+    1
+  \end{bmatrix}
+\end{equation}
+
+\begin{equation}
+  \label{eq:chietadexy}
+  \begin{split}
+    \xi(x,y) & =
+    \frac{x(y_3-y_1)+y(x_1-x_3)+y_1x_3-y_3x_1}{(x_2-x_1)(y_3-y_1)+(y_1-y_2)(x_3-x_1)} \\
+    \eta(x,y) & =
+    \frac{x(y_1-y_2)+y(x_2-x_1)+y_2x_1-y_1x_2}{(x_2-x_1)(y_3-y_1)+(y_1-y_2)(x_3-x_1)}
+  \end{split}
+\end{equation}
+
+\begin{equation}
+  \label{eq:fftridechieta}
+  \begin{split}
+    N_1(\xi,\eta) & = 1 - \xi - \eta \\
+    N_2(\xi,\eta) & = \xi            \\
+    N_3(\xi,\eta) & = \eta           
+  \end{split}
+\end{equation}
+
+\begin{equation}
+  \label{eq:combinacionlinealtrichieta}  
+  \begin{split}
+    \vec{v} & = 
+    N_{1}(\xi,\eta) \cdot \vec{v_1} + N_{2}(\xi,\eta) \cdot \vec{v_2}
+    + N_{3}(\xi,\eta) \cdot \vec{v_3} \\
+    & = (1-\xi-\eta) \cdot \vec{v_1} + \xi\vec{v_2} + \eta\vec{v_3}
+    \end{split}
+\end{equation}  
+
+\begin{equation}
+  \label{eq:mapeoinversocuadrado}
+  \begin{split}
+    x & = a_1 + a_2\xi + a_3\eta + a_4\xi\eta \\
+    y & = b_1 + b_2\xi + b_3\eta + b_4\xi\eta
+  \end{split}
+\end{equation}
+
+\begin{equation}
+  \label{eq:ffcuadechieta}
+  \begin{split}
+    N_1 & = \frac{ (1-\eta)(1-\xi) }{4} \\
+    N_2 & = \frac{ (1+\eta)(1-\xi) }{4} \\
+    N_3 & = \frac{ (1+\eta)(1+\xi) }{4} \\
+    N_4 & = \frac{ (1-\eta)(1+\xi) }{4} 
+  \end{split}
+\end{equation}
+
+\begin{equation}
+  \label{eq:pdechieta}
+  \vec{P} = \frac{1}{4}(\vec{P_1} + \vec{P_2} + \vec{P_3} +
+  \vec{P_4}) + \frac{\xi}{4}(\vec{P_2} - \vec{P_1} + \vec{P_3} -
+  \vec{P_4}) + \frac{\eta}{4}(\vec{P_3} - \vec{P_2} + \vec{P_4} -
+  \vec{P_1}) + \frac{\xi\eta}{4}(\vec{P_1} - \vec{P_2} + \vec{P_3} -
+  \vec{P_4}) 
+\end{equation}
+
+\begin{equation}
+  \label{eq:interpolacionlineal}
+  \vec{P} = (1-\alpha)\vec{P_1} + \alpha\vec{P_2} \qquad \alpha\in[0,1]
+\end{equation}
+
+%%% Local Variables:
+%%% TeX-master: informe.tex
+%%% End:

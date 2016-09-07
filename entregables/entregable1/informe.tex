@@ -1,4 +1,6 @@
 
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % University Assignment Title Page 
 % LaTeX Template
@@ -30,6 +32,8 @@
 %\title{Title page with logo}
 %----------------------------------------------------------------------------------------
 %	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+
+
 %----------------------------------------------------------------------------------------
 
 \documentclass[12pt]{article}
@@ -45,8 +49,10 @@
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{eufrak}
+
                       
 \begin{document}
+
 
 \begin{titlepage}
 
@@ -60,8 +66,7 @@
 
   \textsc{\LARGE Universidad Nacional del
     Litoral}\\[1.5cm] % Name of your university/college
-  \textsc{\Large Facultad de Ingeniería y Ciencias Hídricas
-  }\\[0.5cm] % Major heading such as course name
+  \textsc{\Large Facultad de Ingeniería y Ciencias Hídricas}\\[0.5cm] % Major heading such as course name
   \textsc{\large Proyecto Final de Carrera:
     ``Análisis e implementación de un método para la proyección de
     soluciones en problemas de interacción fluido-estructura con mallas no coincidentes''}\\[0.5cm] % Minor heading such as course title
@@ -118,20 +123,17 @@
   % ----------------------------------------------------------------------------------------
 
   \vfill % Fill the rest of the page with whitespace
-
 \end{titlepage}
 
-\begin{abstract}
-  El presente documento es un breve informe que contendrá, entre
-  otros aspectos, una breve descripción de los conceptos que se
-  adquirieron en la etapa del cronograma denominada ``Revision bibliografica básica''.
-\end{abstract}
+\input{resumen}
 
 \section{Introducción}
 
 Este informe tiene como objetivo desarrollar brevemente cuáles han
 sido los conocimientos adquiridos a lo largo de esta primera etapa, entre los que se pueden mencionar: esquemas de discretización, métodos
 numéricos de aproximación de funciones en $ R^n$ por interpolación, mapeos de espacios euclideos en $2-D$ a espacios afines, estructuras de datos para representar las mallas relativas a los dominios discretos, etc.. A lo largo del mismo, se abordarán las diferentes temáticas; para luego finalizar con la muestra de algunos casos de prueba que permitan demostrar la correcta integración de todas estas herramientas desarrolladas.
+
+
 
 \section{Interpolación de funciones-estados}
 
@@ -385,3 +387,8 @@ visto a lo largo de esta unidad temática.
 % We hope you find write\LaTeX\ useful, and please let us know if you
 % have any feedback using the help menu above.
 
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
