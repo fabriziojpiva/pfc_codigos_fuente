@@ -131,7 +131,7 @@
 
 Este informe tiene como objetivo desarrollar brevemente cuáles han
 sido los conocimientos adquiridos a lo largo de esta primera etapa, entre los que se pueden mencionar: esquemas de discretización, métodos
-numéricos de aproximación de funciones en $ R^n$ por interpolación, mapeos de espacios euclideos en $2-D$ a espacios afines, estructuras de datos para representar las mallas relativas a los dominios discretos, etc.. A lo largo del mismo, se abordarán las diferentes temáticas; para luego finalizar con la muestra de algunos casos de prueba que permitan demostrar la correcta integración de todas estas herramientas desarrolladas.
+numéricos de aproximación de funciones en $ R^n$ por interpolación, mapeos de espacios euclideos en $2D$ a espacios afines, estructuras de datos para representar las mallas relativas a los dominios discretos, etc.. A lo largo del mismo, se abordarán las diferentes temáticas; para luego finalizar con la muestra de algunos casos de prueba que permitan demostrar la correcta integración de todas estas herramientas desarrolladas.
 
 
 
@@ -141,93 +141,161 @@ Comenzando con el primer tema abordado en esta etapa inicial del proyecto, estud
 
 \subsection{El caso del triángulo}
 \label{sec:triangulos}
-Comenzando con el caso más sencillo, supongamos que contamos con tres puntos definidos en el plano: $ \vec{P}_{1} $, $ \vec{P}_{2} $ y $ \vec{P}_{3} $ no colineales. Éstos puntos, definen un triángulo, como puede verse en Fig. 1.
-\\
-Fig1.
-%%%%%%% FIG. 1: COLOCAR FIGURA DE UN TRIÁNGULO ACA %%%%%%%%%%%%
-\\
-Además, cada uno de ellos puede contener información relativa a cualquier cantidad fisica de interés, es decir, sobre $ \vec{P}_{1} $ por ejemplo, podría encontrarse definida una cantidad vectorial cualquiera $ \vec{v}_{1}$, y para el resto de los puntos cualquier otra cantidad $ \vec{v}_{i=2,3} $. Por lo tanto, si sólo se conocen las magnitudes físicas sobre tales posiciones espaciales, ¿cómo podremos hallar la correspondiente cantidad $ \vec{v}_{p} $ a un punto $\vec{p}$ que se encuentre dentro del triángulo definido por $ \lbrace \vec{P}_{1}, \vec{P}_{2}, \vec{P}_{3}  \rbrace $? Para responder a ésto, utilizamos un método de interpolación que consiste en la utilización de coordenadas de áreas, también denominadas coordenadas baricentricas, para luego obtener $ \vec{v}_{p} $ simplemente ponderando cada $ \vec{v}_{i=1,2,3} $ de acuerdo a su posición relativa a $ \vec{p} = \lbrace x,y \rbrace $, como se muestra en la ecuación (1).
-\\
-Colocar ecuacion 1 .
-%%% colocar v=N1(P1)*+N2(P2)*v2+N3(P3)*v3 %%%%
-\\
-Las funciones de (1), $ N_{i} ( \vec{p} )$, se denominan funciones de forma y deben hallarse de tal manera que, cuando $ \vec{p} = \vec{P}_{i} $, la salida de (1) sea exactamente $\vec{v}_{i}$.\\
-Si bien es correcto trabajar con las funciones $ N_{i} ( \vec{p} )$ basadas en las coordenadas $(x,y)$, nosotros hemos decidido realizar un cambio de variables, ya que realizamos un mapeo de las coordenadas definidas en el plano $(x,y)$, hacia coordenadas $ (\xi, \eta) \in [0, 1] $. Entonces, para cualesquiera 3 puntos $ \lbrace \vec{P}_{1}, \vec{P}_{2}, \vec{P}_{3}  \rbrace $, tendremos que el mapeo nos producirá las relaciones definidas en (2).
-\\
-%%%%%%%%%%%%%%%%%%%%%%%%%%
-Colocar las igualdades P1=[0,0]; P2=[1;0] y P3=[0;1].
-%%%%%%%%%%%%%%%%%%%%%%%%%%
-\\
+Comenzando con el caso más sencillo, supongamos que contamos con tres puntos definidos en el plano: $ \vec{P}_{1} $, $ \vec{P}_{2} $ y $ \vec{P}_{3} $ no colineales. Éstos puntos, definen un triángulo, como puede verse en la figura \ref{fig:tri_simple}.
+
+\begin{figure}
+\centering
+\includegraphics[scale=.8]{triangulo_simple}
+\caption{\label{fig:tri_simple} Triángulo formado por tres puntos $ \lbrace \vec{P}_{1}, \vec{P}_{2}, \vec{P}_{3}  \rbrace $}
+\end{figure}
+
+Además, cada uno de ellos puede contener información relativa a cualquier cantidad fisica de interés, es decir, sobre $ \vec{P}_{1} $ por ejemplo, podría encontrarse definida una cantidad vectorial cualquiera $ \vec{v}_{1}$, y para el resto de los puntos cualquier otra cantidad $ \vec{v}_{i=2,3} $. Por lo tanto, si sólo se conocen las magnitudes físicas sobre tales posiciones espaciales, ¿cómo podremos hallar la cantidad $ \vec{v}_{p} $ correspondiente a un punto $\vec{p}$ que se encuentre dentro del triángulo definido por $ \lbrace \vec{P}_{1}, \vec{P}_{2}, \vec{P}_{3}  \rbrace $? Para responder a ésto, utilizamos un método de interpolación que consiste en la utilización de coordenadas de áreas, también denominadas coordenadas baricentricas, para luego obtener $ \vec{v}_{p} $ simplemente ponderando cada $ \vec{v}_{i=1,2,3} $ de acuerdo a su posición relativa a $ \vec{p} = \lbrace x,y \rbrace $, como se muestra en la ecuación (\ref{eq:combinacionlinealtrixy}).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+\label{eq:combinacionlinealtrixy}  
+  \vec{v}_{p} = 
+  N_{1}(\vec{p}) \cdot \vec{v_1} + 
+  N_{2}(\vec{p}) \cdot \vec{v_2} + 
+  N_{3}(\vec{p}) \cdot \vec{v_3} 
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Las funciones de (\ref{eq:combinacionlinealtrixy}), $ N_{i} ( \vec{p} )$, se denominan funciones de forma y deben hallarse de tal manera que, cuando $ \vec{p} = \vec{P}_{i} $, la salida de (\ref{eq:combinacionlinealtrixy}) sea exactamente $\vec{v}_{i}$.\\
+Si bien es correcto trabajar con las funciones $ N_{i} ( \vec{p} )$ basadas en las coordenadas $(x,y)$, nosotros hemos decidido realizar un cambio de variables, ya que realizamos un mapeo de las coordenadas definidas en el plano $(x,y)$, hacia coordenadas $ (\xi, \eta) \in [0, 1] $ (ver figura \ref{fig:tri}).
+
+\begin{figure}
+\centering
+\includegraphics[scale=.8]{Triangulo}
+\caption{\label{fig:tri} } Mapeo de un triángulo definido en $(x,y)$ a $(\xi, \eta) \in [0; 1]$.
+\end{figure}
+
+ Entonces, para cualesquiera 3 puntos $ \lbrace \vec{P}_{1}, \vec{P}_{2}, \vec{P}_{3}  \rbrace $, tendremos que el mapeo nos producirá las relaciones definidas en (\ref{eq:verticesmastertri}).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+  \label{eq:verticesmastertri}
+  \vec{P_1} \rightarrow 
+  \begin{bmatrix}
+    0\\ 
+    0
+  \end{bmatrix}\quad \vec{P_2} \rightarrow
+  \begin{bmatrix}
+    1\\
+    0
+  \end{bmatrix}\quad \vec{P_3} \rightarrow
+  \begin{bmatrix}
+    0\\
+    1
+  \end{bmatrix}
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 La ventaja de llevar a cabo el cambio de variables, radica en que podremos tratar a todo triángulo definido por tres puntos cualquiera, como un único triángulo estandar (denominado elemento máster), que se encuentra acotado al intervalo $ [0; 1] $. En futuras aplicaciones de ésta técnica, se hará visible con mayor facilidad la ventaja, ya que a la hora de llevar a cabo integraciones numéricas, éstas operaciones no dependerán de la forma del triángulo, sino que harán uso del elemento máster. 
 \\
-%% COLOCAR IMAGEN DE UN TRIANGULO CUALQUIERA -> ELEMENTOR MASTER
-\\
-Ahora, teniendo en cuenta (2), vemos que las coordenadas $x$ e $y$, necesitan relacionarse funcionalmente con  $\xi$ y $\eta$, y lo inverso también es cierto, es decir: $x=x( \xi, \eta)$; $y=y( \xi, \eta)$; $\xi= \xi(x,y)$ y $\eta= \eta(x,y)$. Éstas relaciones son importantes, ya que nos permiten movernos de un espacio a otro, pero por el momento estamos interesados en determinar $\xi= \xi(x,y)$ y $\eta= \eta(x,y)$, para luego evaluar las funciones de forma sobre tales expresiones. Sin profundizar en su obtención, llegamos a
-\\ 
-%% COLOCAR LA ECUACIÓN (3) PARA xi(x,y), eta(x,y).
-\\
-Por otra parte, con las consideraciones mencionadas anteriormente y sin ahondar en los pasos algebraicos necesarios, llegamos a obtener las siguientes igualdades para las funciones de forma.
-\\
-%% COLOCAR ECUACIÓN 4: EXPRESIÓN DE LAS FUNCIONES DE FORMA EN FUNCION DE x(XI,ETA) E Y(XI,ETA)
-\\
-Así, (1) se puede reescribir como sigue.
-\\
-%% COLOCAR LA EXPRESION (5): v=N1(xi,eta)P1+N2(xi,eta)P2+N3(xi,eta)P3.
-\\
+Ahora, teniendo en cuenta (\ref{eq:verticesmastertri}), vemos que las coordenadas $x$ e $y$, necesitan relacionarse funcionalmente con  $\xi$ y $\eta$, y lo inverso también es cierto, es decir: $x=x( \xi, \eta)$; $y=y( \xi, \eta)$; $\xi= \xi(x,y)$ y $\eta= \eta(x,y)$. Éstas relaciones son importantes, ya que nos permiten trasladarnos de un espacio a otro, pero por el momento estamos interesados en determinar $\xi= \xi(x,y)$ y $\eta= \eta(x,y)$, para luego evaluar las funciones de forma sobre los parámetros $(\xi, \eta)$. Sin profundizar en su obtención, llegamos a
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+  \label{eq:chietadexy}
+  \begin{split}
+    \xi(x,y) & =
+    \frac{x(y_3-y_1)+y(x_1-x_3)+y_1x_3-y_3x_1}{(x_2-x_1)(y_3-y_1)+(y_1-y_2)(x_3-x_1)} \\
+    \eta(x,y) & =
+    \frac{x(y_1-y_2)+y(x_2-x_1)+y_2x_1-y_1x_2}{(x_2-x_1)(y_3-y_1)+(y_1-y_2)(x_3-x_1)}
+  \end{split}
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+Por otra parte, con las consideraciones mencionadas anteriormente y sin ahondar en los pasos algebraicos necesarios, llegamos a obtener las siguientes igualdades para las funciones de forma.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+  \label{eq:fftridechieta}
+  \begin{split}
+    N_1(\xi,\eta) & = 1 - \xi - \eta \\
+    N_2(\xi,\eta) & = \xi            \\
+    N_3(\xi,\eta) & = \eta           
+  \end{split}
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Así, (\ref{eq:combinacionlinealtrixy}) se puede reescribir como sigue.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+  \label{eq:combinacionlinealtrichieta}  
+  \begin{split}
+    \vec{v} & = 
+    N_{1}(\xi,\eta) \cdot \vec{v_1} + N_{2}(\xi,\eta) \cdot \vec{v_2}
+    + N_{3}(\xi,\eta) \cdot \vec{v_3} \\
+    & = (1-\xi-\eta) \cdot \vec{v_1} + \xi\vec{v_2} + \eta\vec{v_3}
+    \end{split}
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Con éstas simples ecuaciones, ahora es posible determinar, cuál es el valor de la magnitud física que se desea medir sobre el punto $\vec{p}$ perteneciente al triángulo en cuestión.
 \\
 Una situación que debemos tener en cuenta es cuando el punto $\vec{p}$ no se encuentra dentro del triángulo mencionado. En primer lugar, para determinar si el punto pertenece o no a dicha figura geométrica, debemos analizar las coordenadas $\xi= \xi(x,y)$ y $\eta= \eta(x,y)$. El procedimiento de verificación, básicamente, es el siguiente: cuando $\xi$ o $\eta$ son menores que cero ya podemos descartar el hecho de que $\vec{p}$ se encuentre en el interior de triangulo; si se encuentran por encima de la recta definida por $1-\xi-\eta$ entonces tampoco pertenece al triangulo; así, en cualquier otro caso, el punto está en el interior de la figura. 
 
-
-
 \subsection{El caso del cuadrilátero}
 \label{sec:cuadrilatero}
-Como en el caso del triángulo, cuando es conocida una magnitud física sobre los vertices de un cuadrlátero dado por los puntos $ \lbrace \vec{P}_{1}, \vec{P}_{2}, \vec{P}_{3}, \vec{P}_{3}  \rbrace $, puede hallarse el valor numérico en cualquier punto del interior de la figura haciendo
-\\
-%%% ECUACION 6 v=N1(p)*v1+N2(p)*v2+N3(p)*v3+N4(p)*v4
-\\
+Como en el caso del triángulo, cuando es conocida una magnitud física sobre los vertices de un cuadrlátero definido por los puntos $ \lbrace \vec{P}_{1}, \vec{P}_{2}, \vec{P}_{3}, \vec{P}_{3}  \rbrace $, puede hallarse el valor numérico en cualquier punto del interior de la figura haciendo
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+\label{eq:combinacionlinealcuaxy}  
+  \vec{v} = 
+  N_{1}(\vec{p}) \cdot \vec{v_1} + 
+  N_{2}(\vec{p}) \cdot \vec{v_2} + 
+  N_{3}(\vec{p}) \cdot \vec{v_3} +  
+  N_{4}(\vec{p}) \cdot \vec{v_4} 
+\end{equation} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Como puede observarse, ésta forma de calcular $ \vec{v}_{p} $ es similar a la utilizada para el triángulo, sólo que debe añadirse un término más para contemplar la presencia de un vértice adicional.
 \\
-También, llevamos a cabo un cambio de variables, pero aquí las nuevas variables $(\xi, \eta)$ van a estar contenidas en la región cuadrada $[-1;1]$. Así, estamos mapeando un cuadrilatero de forma irregular a un cuadrado estandar de magnitud 2 en sus lados y centrado en el origen (características deseables para llevar a cabo integracion numérica mediante cuadratura Gaussiana sobre una tal región). Para poder mapear puntos definidos sobre el plano $(x,y)$ al plano $(\xi, \eta)$, es necesario resolver el sistema dado por 
-\\
-%% ECUACION 7 DE LA MUERTE
-\\
-Como la forma cerrada de $\xi= \xi(x,y)$ y $\eta= \eta(x,y)$ es algo extensa, preferimos no incluirlas para mantener la legibilidad del documento. \\
-Nuevamente, para determinar si un dado punto definido en el plano $(x,y)$ se encuentra dentro del cuadrado $[-1; 1]$, es necesario aplicar un método de verificación sencillo: básicamente, si [$(\xi$, $\eta) <  -1$] ó [$(\xi$, $\eta) >  1  $], el punto no se encuentra dentro del cuadrilátero y no deberá calcularse ninguna magnitud sobre él. En cuanto a las funciones de forma, modificadas para calcularse sobre las nuevas variables $(\xi, \eta)$, sus expresiones son.
-\\
-%% ECUACION 8 funciones de forma cuadrilatero
-\\
+También, llevamos a cabo un cambio de variables, pero aquí las nuevas variables $(\xi, \eta)$ van a estar contenidas en la región cuadrada $[-1;1]$. Así, estamos mapeando un cuadrilatero de forma irregular a un cuadrado estandar de magnitud 2 en sus lados y centrado en el origen (características deseables para llevar a cabo integracion numérica mediante cuadratura Gaussiana sobre una tal región)  (ver figura \ref{fig:cuad}). 
 
+\begin{figure}
+\centering
+\includegraphics[scale=.8]{Cuadrilatero}
+\caption{\label{fig:cuad} } Mapeo de un cuadrilátero definido en $(x,y)$ a $(\xi, \eta) \in [-1; 1]$.
+\end{figure}
 
+Para poder mapear puntos definidos sobre el plano $(x,y)$ al plano $(\xi, \eta)$, es necesario resolver el sistema dado por 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+  \label{eq:mapeoinversocuadrado}
+  \begin{split}
+    x & = a_1 + a_2\xi + a_3\eta + a_4\xi\eta \\
+    y & = b_1 + b_2\xi + b_3\eta + b_4\xi\eta
+  \end{split}
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Donde $(a_1, b_1)= \frac{(\vec{P_1} + \vec{P_2} + \vec{P_3} +
+  \vec{P_4})}{4}$; $(a_2, b_2)=  \frac{(\vec{P_2} - \vec{P_1} + \vec{P_3} -
+  \vec{P_4})}{4}$; $(a_3, b_3)= \frac{(\vec{P_3} - \vec{P_2} + \vec{P_4} -
+  \vec{P_1})}{4} $; $(a_4, b_4)= \frac{(\vec{P_1} - \vec{P_2} + \vec{P_3} - \vec{P_4})}{4}$. \\ \\
+Como la forma cerrada de $\xi= \xi(x,y)$ y $\eta= \eta(x,y)$ que se obtiene al resolver (\ref{eq:mapeoinversocuadrado}) es algo extensa, preferimos no incluirlas para mantener la legibilidad del documento. \\
+Nuevamente, para determinar si un punto dado definido en el plano $(x,y)$ se encuentra dentro del cuadrado $[-1; 1]$, es necesario aplicar un método de verificación sencillo: básicamente, si [$(\xi$, $\eta) <  -1$] ó [$(\xi$, $\eta) >  1  $], el punto no se encuentra dentro del cuadrilátero y no deberá calcularse ninguna magnitud sobre él. En cuanto a las funciones de forma, las cuales se modifican para calcularse sobre las nuevas variables $(\xi, \eta)$, poseen las siguientes expresiones.
 
-\lstset{language=C++, breaklines=true, basicstyle=\footnotesize}
-\begin{lstlisting}[frame=single]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+  \label{eq:ffcuadechieta}
+  \begin{split}
+    N_1 & = \frac{ (1-\eta)(1-\xi) }{4} \\
+    N_2 & = \frac{ (1+\eta)(1-\xi) }{4} \\
+    N_3 & = \frac{ (1+\eta)(1+\xi) }{4} \\
+    N_4 & = \frac{ (1-\eta)(1+\xi) }{4} 
+  \end{split}
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-MatrixXf  multiplicar_matrices_v2( const MatrixXf &A,const MatrixXf &B){
-								 
-  int nfilas = A.rows();
-  int ncols = B.cols();
-  int limk = A.cols();
-  MatrixXf C = MatrixXf::Zero(nfilas, ncols );
- 
-  for (int i=0; i<nfilas ; ++i) {
-    for (int k=0; k<limk ; ++k) {
-      for (int j=0; j<ncols ; ++j) {
-	C(i,j) += A(i,k)*B(k,j);
-      }  
-    }
-  }
- return C;
-}
+Las funciones de forma en (\ref{eq:ffcuadechieta}) permiten modificar a la ecuación (\ref{eq:combinacionlinealcuaxy}), para reescribbirla de la siguiente manera:
 
-\end{lstlisting}
-
-Asimismo, esta versión que coloca el lazo interno que recorra las
-columnas, produce un impacto significativo en el tiempo de ejecución
-si lo comparamos con el del algoritmo de multiplicación estándar, ya que
-para esta nueva versión es de $9\cdot10^{-06}$ segundos.
+\begin{equation}
+\label{eq:vdechieta}  
+  \vec{v} = 
+  \frac{ (1-\eta)(1-\xi) }{4} \cdot \vec{v_1} + 
+  \frac{ (1+\eta)(1-\xi) }{4} \cdot \vec{v_2} + 
+  \frac{ (1+\eta)(1+\xi) }{4} \cdot \vec{v_3} +  
+  \frac{ (1-\eta)(1+\xi) }{4} \cdot \vec{v_4} 
+\end{equation} 
 
 \section{Aplicación de desenrollado de ciclos}
 \label{sec:desenrollado}
@@ -247,52 +315,12 @@ en esta matriz, y que el resultado se almacene en un vector de
 Nx1. Este algoritmo podría implementarse en C++ de la siguiente
 manera:
 
-\lstset{language=C++, breaklines=true, basicstyle=\footnotesize}
-\begin{lstlisting}[frame=single]
-
-#include <iostream>
-#include <Eigen/Dense>
-#include <time.h>
-
-using namespace Eigen;
-using namespace std;
-
-VectorXf modulos_vectores (MatrixXf M){
-  int nfilas = M.rows();
-  VectorXf R = VectorXf::Zero(nfilas,1);
-  
-  for (int i=0; i< nfilas; ++i){
-    for (int j=0; j<3 ; ++j) {
-      R(i,0) += M(i,j)*M(i,j);
-    }
-    R(i,0) = sqrt(R(i,0) );
-  }
-  return R;
-}
-
-\end{lstlisting}
  
 Para aplicar el método de desenrollado de ciclos, podríamos
 deshacernos del ciclo interno simplemente escribiendolo de manera
 explícita como se hizo en la función
 \emph{modulos\_vectores\_desenrollado}:
 
-\lstset{language=C++, breaklines=true, basicstyle=\footnotesize}
-\begin{lstlisting}[frame=single]
-
-VectorXf modulos_vectores_desenrollado (MatrixXf M){
-  int nfilas = M.rows();
-  VectorXf R = VectorXf::Zero(nfilas,1);
-  
-  for (int i=0; i< nfilas; ++i){
-      R(i,0) = M(i,0)*M(i,0) + M(i,1)*M(i,1) + M(i,2)*M(i,2);
-      R(i,0) = sqrt( R(i,0) );
-    }
-
-  return R;
-}
-
-\end{lstlisting}
 
 A continuación se hará una prueba comparativa de estos dos algoritmos,
 con matrices de tamaño 10, 100, y 1000. Los resultados de los tiempos
