@@ -1,18 +1,18 @@
-% \documentclass[12pt]{article}
-% \usepackage[spanish]{babel}
-% \usepackage[utf8x]{inputenc}
+\documentclass[12pt]{article}
+\usepackage[spanish]{babel}
+\usepackage[utf8x]{inputenc}
 \usepackage{amsmath}
-% \usepackage{graphicx}
-% \usepackage[colorinlistoftodos]{todonotes}
-% \usepackage{float} %Este paquete es para que se usen los entornos de las tablas, de modo que se puedan fijar en alguna posición en particular.
-% \usepackage{hyperref} %Este paquete es para poder insertar hipervínculos en el documento, como por ejemplo direcciones de e-mail.
-% \usepackage{textcomp} %Paquete para poner los logotipos de registrado,copyright, etc.
-% \usepackage{listings} %Paquete para los códigos en cualquier lenguage.
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{float} %Este paquete es para que se usen los entornos de las tablas, de modo que se puedan fijar en alguna posición en particular.
+\usepackage{hyperref} %Este paquete es para poder insertar hipervínculos en el documento, como por ejemplo direcciones de e-mail.
+\usepackage{textcomp} %Paquete para poner los logotipos de registrado,copyright, etc.
+\usepackage{listings} %Paquete para los códigos en cualquier lenguage.
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{eufrak}
                       
-%\begin{document}
+\begin{document}
 
 \begin{equation}
 \label{eq:combinacionlinealtrixy}  
@@ -108,6 +108,38 @@
   \label{eq:interpolacionlineal}
   \vec{P} = (1-\alpha)\vec{P_1} + \alpha\vec{P_2} \qquad \alpha\in[0,1]
 \end{equation}
+
+\begin{equation}
+  \label{eq:xnode}
+  \begin{bmatrix}
+    x_1 & y_1 & z_1 \\
+    x_2 & y_2 & z_2 \\
+    \vdots & \vdots & \vdots \\
+    x_n & y_n & z_n
+  \end{bmatrix}
+\end{equation}
+
+\begin{equation}
+  \label{eq:icone}
+  \begin{bmatrix}
+    n_{11} & \cdots & n_{1N} \\
+    \vdots & \ddots & \vdots \\
+    n_{M1} & \cdots & n_{MN}
+  \end{bmatrix}
+\end{equation}
+
+\begin{equation}
+  \label{eq:estados}
+  \begin{bmatrix}
+    n'_{1} & \vec{e}_{1} \\
+    \vdots & \vdots \\
+    n'_{MN} & \vec{e}_{MN}
+  \end{bmatrix}
+  \qquad \vec{e}_i\in\mathbb{R}^k,\,1\leq i\leq MN,\,k\in \mathbb{N}
+\end{equation}
+
+
+\end{document}
 
 %%% Local Variables:
 %%% TeX-master: informe.tex
