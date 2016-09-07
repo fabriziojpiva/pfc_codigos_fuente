@@ -50,6 +50,7 @@
 \usepackage{amssymb}
 \usepackage{eufrak}
 \usepackage{pdfpages}
+\usepackage{cite} 
 
                       
 \begin{document}
@@ -146,7 +147,7 @@ Comenzando con el caso más sencillo, supongamos que contamos con tres puntos de
 
 \begin{figure}
 \centering
-\includegraphics[scale=.8]{triangulo_simple}
+\includegraphics[scale=.8]{triangulo_simple.pdf}
 \caption{\label{fig:tri_simple} Triángulo formado por tres puntos $ \lbrace \vec{P}_{1}, \vec{P}_{2}, \vec{P}_{3}  \rbrace $}
 \end{figure}
 
@@ -165,7 +166,7 @@ Si bien es correcto trabajar con las funciones $ N_{i} ( \vec{p} )$ basadas en l
 
 \begin{figure}
 \centering
-\includegraphics[scale=.8]{Triangulo.eps}
+\includegraphics[scale=.8]{Triangulo.pdf}
 \caption{\label{fig:tri} } Mapeo de un triángulo definido en $(x,y)$ a $(\xi, \eta) \in [0; 1]$.
 \end{figure}
 
@@ -253,7 +254,7 @@ También, llevamos a cabo un cambio de variables, pero aquí las nuevas variable
 
 \begin{figure}
 \centering
-\includegraphics[scale=.8]{Cuadrilatero}
+\includegraphics[scale=.8]{Cuadrilatero.pdf}
 \caption{\label{fig:cuad} } Mapeo de un cuadrilátero definido en $(x,y)$ a $(\xi, \eta) \in [-1; 1]$.
 \end{figure}
 
@@ -298,61 +299,109 @@ Las funciones de forma en (\ref{eq:ffcuadechieta}) permiten modificar a la ecuac
   \frac{ (1-\eta)(1+\xi) }{4} \cdot \vec{v_4} 
 \end{equation} 
 
-\section{Aplicación de desenrollado de ciclos}
-\label{sec:desenrollado}
+ \section{Mallado y estructuras de datos}
+ \label{sec:mallado}
 
-En esta sección se pondrá en manifiesto como aplicar la técnica de
-desenrollado de ciclos en un algoritmo. La misma consiste en, dado un
-ciclo iterativo común y corriente, disminuir la cantidad de
-repeticiones mediante la codificación explícita de algunas o todas las
-iteraciones. Esta técnica produce una mejora significativa en el
-tiempo de ejecución del algoritmo, como lo veremos en el siguiente
-ejemplo.
+Para poder representar un conjunto de polígonos (triángulos, cuadrados, etc) conectados entre sí, necesitamos una forma de expresar los puntos y la manera que se conectan entre sí. Para esto, necesitamos representar los puntos en una matriz; y las conectividades entre ellos en otra, y esto podemos escribirlo de la siguiente forma:
 
-Supongamos que tenemos una matriz de Nx3, donde cada fila contiene un
-vector en el espacio tridimensional. Ahora supongamos que necesitamos
-un algoritmo que calcule el módulo de cada vector que está almacenado
-en esta matriz, y que el resultado se almacene en un vector de
-Nx1. Este algoritmo podría implementarse en C++ de la siguiente
-manera:
+\begin{equation}
+  \label{eq:xnode}
+  \begin{bmatrix}
+    x_1 & y_1 & z_1 \\
+    x_2 & y_2 & z_2 \\
+    \vdots & \vdots & \vdots \\
+    x_n & y_n & z_n
+  \end{bmatrix}
+\end{equation}
 
- 
-Para aplicar el método de desenrollado de ciclos, podríamos
-deshacernos del ciclo interno simplemente escribiendolo de manera
-explícita como se hizo en la función
-\emph{modulos\_vectores\_desenrollado}:
+\begin{equation}
+  \label{eq:icone}
+  \begin{bmatrix}
+    n_{11} & \cdots & n_{1N} \\
+    \vdots & \ddots & \vdots \\
+    n_{M1} & \cdots & n_{MN}
+  \end{bmatrix}
+\end{equation}
+
+La matriz (\ref{eq:xnode}) es conocida en la literatura como XNODE, mientras que la (\ref{eq:icone}) se denomina ICONE. Ambas, representan perfectamente un conjunto de polígonos en el espacio, porque condensan tanto la información de los puntos como las conectividades entre sí. Mediante ellas, podemos representar mallas como la que se observa en la figura \ref{fig:malla1}, en la cual puede observarse que con la utilización de una misma estructura de datos pueden representarse mallas de diferentes características. Ahora supongamos que la malla coloreada de rojo, contiene en sus nodos alguna cantidad física como temperaturas, mientras que la malla azul no tiene sus temperaturas o posee valores desactualizados. En primer instancia podríamos decir que aquellos nodos donde ambas mallas tienen coincidencia exacta, no necesitan actualización ya que se encuentran espacialmente en el mismo lugar. Sin embargo, ¿que sucede con aquellos puntos como el (3;2.5) de la malla triangular? Necesitamos de alguna manera saber la temperatura en ese punto en función de los puntos mas cercanos de la malla cuadrada, que es la que contiene la información física. Para conseguir esto, se utilizará la denominada interpolación bilineal para cuadriláteros, donde a partir de los nodos del cuadrilátero que contiene al punto de interés, se mapea el punto resolviendo la ecuación (\ref{eq:mapeoinversocuadrado}), y luego con las coordenadas naturales se interpolan las temperaturas con (\ref{eq:vdechieta}).
 
 
-A continuación se hará una prueba comparativa de estos dos algoritmos,
-con matrices de tamaño 10, 100, y 1000. Los resultados de los tiempos
-de ejecución pueden verse en la tabla \ref{tab:resultados}, donde
-podemos observar que el desenrollado tiene un desempeño
-notablemente mejor considerando el tiempo de ejecución.
+\begin{figure}
+\centering
+\includegraphics[scale=.55]{mallascuad1tri3p.pdf}
+\caption{\label{fig:malla1} } Dos mallas de diferentes características.
+\end{figure}
 
-\begin{table}[H]
-  \centering
-  \begin{tabular}{l|r}
-    Sin desenrollado & Con desenrollado \\\hline
-    1.9E-05 & 1E-05 \\
-    1.13E-04 & 8.1E-05 \\
-    8.71E-04 & 6.57E-04
-  \end{tabular}
-  \caption{\label{tab:resultados}Tabla comparativa de tiempos de
-    ejecución en segundos.}
-\end{table}
+Estas mismas ideas pueden aplicarse sin inconvenientes para, por ejemplo, mallas formadas por segmentos de recta (es decir, polígonos de dos vértices). En este caso, la interpolación, se efectua mediante la fórmula lineal:
 
-\section{Conclusiones}
+\begin{equation}
+  \label{eq:interpolacionlineal}
+  \vec{P} = (1-\alpha)\vec{P_1} + \alpha\vec{P_2} \qquad \alpha\in[0,1]
+\end{equation}
 
-Haciendo un análisis de los resultados obtenidos en las secciones
-\ref{sec:matrices} y \ref{sec:desenrollado} podemos concluir que las
-técnicas de reordenamiento y desenrollado de ciclos son muy útiles a
-la hora de programar, ya que en este informe se ha puesto en evidencia
-mediante sencillos ejemplos que los tiempos de ejecución mejoran
-notablemente cuando se utilizan las mismas. Además, estos tiempos de
-ejecución podrían mejorarse aun mas si se aplicaran ambas técnicas de
-manera simultánea o si se complementaran con otras técnicas que se han
-visto a lo largo de esta unidad temática.
+Obsérvese en la ecuación que se está interpolando entre las coordenadas de dos puntos, pero esta misma expresión puede aplicarse para interpolar las temperaturas que tienen esos dos puntos.
+Una pregunta que podría surgir en este punto es ¿cómo representar las cantidades físicas de los nodos en una malla? Pues con las matrices XNODE e ICONE podemos conocer perfectamente la estructura de la malla, así que podríamos agregar una tercer matriz que indique para cada nodo, la cantidad física que le corresponde:
 
+\begin{equation}
+  \label{eq:estados}
+  \begin{bmatrix}
+    n'_{1} & \vec{e}_{1} \\
+    \vdots & \vdots \\
+    n'_{MN} & \vec{e}_{MN}
+  \end{bmatrix}
+  \qquad \vec{e}_i\in\mathbb{R}^k,\,1\leq i\leq MN,\,k\in \mathbb{N}
+\end{equation}
+
+La primer columna de esta matriz indica los nodos, donde es necesario aclarar que la numeración de los mismos puede no seguir un orden consecutivo; es por esto que es necesario explicitar el número de nodo. Este, dice el número de fila de la matriz XNODE, donde están las coordenadas del nodo en cuestión.
+
+\section{Introducción a la Mecánica de Fluídos}
+
+	En Mecánica de fluídos, se suelen estudiar diversos temas que se centran en lo que se denomina \emph{flujo}. Según \cite{Hirsch} el flujo es una cantidad fundamental asociada a una variable $U$ y definida como la cantidad de $U$ que atraviesa una determinada superficie por unidad de tiempo. Básicamente, los flujos pueden presentarse en dos regímenes completamente diferentes: flujo laminar o flujo turbulento. Los laminares se caracterizan porque las partículas de fluído se mueven de manera ordenada, en láminas, en la dirección de la corriente y sin generar flujos ni movimientos transversales. Este tipo de flujos aparece cuando la viscosidad es el fenómeno de transporte dominante, lo cual permite atenuar cualquier tipo de perturbación que puede alterar al flujo. Por el contrario, los flujos tubulentos se caracterizan por presentar fluctuaciones aleatorias de los campos de presión y velocidad, tanto en el tiempo como en el espacio. Estas fluctuaciones provienen de inestabilidades del flujo que en forma de cascada de energía generan vórtices cada vez más pequeños hasta que se disipan en forma de calor por la acción de la viscosidad.
+
+\section{Análisis de librerías estándar C++}
+
+	Según la investigación bibliográfica que se ha llevado a cabo, se considera que la librería Eigen es la mejor candidata a ser seleccionada para codificar de manera eficiente las distintas herramientas detalladas anteriormente. Es de destacar, que la elección ha sido basada en benchmarks publicados en internet \cite{chino}\cite{chino2}, donde se han puesto a prueba las distintas librerías de manejo de sistemas lineales algebráicos. Otros criterios que se utilizaron para seleccionar la misma son: vigencia, soporte, y proyección a futuro. 
+
+
+\begin{thebibliography}{X}
+\bibitem{Hirsch} \textsc{Hirsch,C.},
+\textit{Numerical Computation of Internal and External Flows}, segunda edición,
+Elsevier, USA, Burlingtom, 2007.
+\bibitem{cfdesp} \textsc{Oro,J.M.F},
+<<Técnicas numéricas en ingeniería de fluidos>>,
+\textit{Introducción a la dinámica de fluídos computacional (CFD) por el método de volúmenes finitos}, primera edición, REVERTÉ, España, Barcelona, 2012, págs. 46--47.
+\bibitem{chino} \textsc{Ho,N.} (2012).
+\textit{www.nghiaho.com/?p=1726}, 4 de septiembre de 2016.
+\bibitem{chino2} \textsc{Ho,N.} (2015).
+\textit{http://www.360doc.com/content/15/0325/15/21172899\_457940201.shtml}, 4 de septiembre de 2016.
+
+\end{thebibliography}
+
+% \begin{table}[H]
+%   \centering
+%   \begin{tabular}{l|r}
+%     Sin desenrollado & Con desenrollado \\\hline
+%     1.9E-05 & 1E-05 \\
+%     1.13E-04 & 8.1E-05 \\
+%     8.71E-04 & 6.57E-04
+%   \end{tabular}
+%   \caption{\label{tab:resultados}Tabla comparativa de tiempos de
+%     ejecución en segundos.}
+% \end{table}
+
+% \section{Conclusiones}
+
+% Haciendo un análisis de los resultados obtenidos en las secciones
+% \ref{sec:matrices} y \ref{sec:desenrollado} podemos concluir que las
+% técnicas de reordenamiento y desenrollado de ciclos son muy útiles a
+% la hora de programar, ya que en este informe se ha puesto en evidencia
+% mediante sencillos ejemplos que los tiempos de ejecución mejoran
+% notablemente cuando se utilizan las mismas. Además, estos tiempos de
+% ejecución podrían mejorarse aun mas si se aplicaran ambas técnicas de
+% manera simultánea o si se complementaran con otras técnicas que se han
+% visto a lo largo de esta unidad temática.
+\bibliographystyle{acm}
+\bibliography{biblio}
  \end{document}
 
 
