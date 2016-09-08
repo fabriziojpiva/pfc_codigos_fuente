@@ -133,18 +133,18 @@
 
 Este informe tiene como objetivo desarrollar brevemente cuáles han
 sido los conocimientos adquiridos a lo largo de esta primera etapa, entre los que se pueden mencionar: esquemas de discretización, métodos
-numéricos de aproximación de funciones en $\mathbb{R}^n$ por interpolación, mapeos de espacios euclídeos en $2D$ a espacios afines, estructuras de datos para representar las mallas relativas a los dominios discretos, etc.. A lo largo del mismo, se abordarán las diferentes temáticas; para luego finalizar con la muestra de algunos casos de prueba que permitan demostrar la correcta integración de todas estas herramientas desarrolladas.
+numéricos de aproximación de funciones en $\mathbb{R}^n$ por interpolación, mapeos de espacios euclídeos bidimensionales a espacios afines, estructuras de datos para representar las mallas relativas a los dominios discretos, etc.. A lo largo del mismo, se abordarán las diferentes temáticas; para luego finalizar con la muestra de algunos casos de prueba que permitan demostrar la correcta integración de todas las herramientas desarrolladas.
 
 
 
 \section{Interpolación de funciones-estados}
 \label{sec:interpestados}
 
-Comenzando con el primer tema abordado en esta etapa inicial del proyecto, estudiamos la interpolación de funciones-estados $\vec{ \phi } (x,y)$ , asociados a un elemento geométrico que se encuentra definido en el plano $\mathbb{R}^2$ , tales como: triángulos o cuadriláteros. Para cada punto $(x,y)\in \mathbb{R}^2$, se denomina \emph{estado} a una propiedad física $\vec{ \phi } (x,y)$ asociada a ese punto particular (por ejemplo, temperatura, velocidad, presión, densidad, etc.), donde el \emph{estado} puede ser un campo escalar (como la temperatura) o un campo vectorial (como un campo de velocidades). Dado que en etapas posteriores se trabajará con el método de elementos finitos, es de particular interés estudiar los dos elementos mayormente utilizados en este método: el triángulo y el cuadrilátero. Ambos tipos de polígonos pueden conformar estructuras mas complejas como las \emph{mallas}, que no son mas que un conjunto de triángulos o cuadriláteros conectados entre sí. Por lo tanto, analizaremos estos dos tipos de elementos constitutivos en las secciones posteriores.
+Comenzando con el primer tema abordado en esta etapa inicial del proyecto, estudiamos la interpolación de funciones-estados $\vec{ \phi } (x,y)$ , asociados a un elemento geométrico que se encuentra definido en el plano $\mathbb{R}^2$ , tales como: triángulos o cuadriláteros. Para cada punto $(x,y)\in \mathbb{R}^2$, se denomina \emph{estado} a una propiedad física $\vec{ \phi } (x,y)$ asociada a ese punto particular (por ejemplo, temperatura, velocidad, presión, densidad, etc.), donde el \emph{estado} puede ser un campo escalar (como la temperatura) o un campo vectorial (como las velocidades). Dado que en etapas posteriores se trabajará con el método de elementos finitos, es de particular interés estudiar los dos elementos mayormente utilizados en el mismo: el triángulo (lineal) y el cuadrilátero (bilineal). Ambos tipos de polígonos pueden conformar estructuras mas complejas como las \emph{mallas}, que no son más que un conjunto de triángulos o cuadriláteros conectados entre sí. Por lo tanto, analizaremos estos dos tipos de elementos constitutivos en las secciones posteriores.
 
 \subsection{Elemento triangular}
 \label{sec:triangulos}
-Comenzando con el caso más sencillo, supongamos que contamos con tres puntos definidos en el plano: $ \vec{P}_{1} $, $ \vec{P}_{2} $ y $ \vec{P}_{3} $ no colineales. Éstos puntos, definen un triángulo, como puede verse en la fig. (\ref{fig:tri_simple}).
+Comenzando con el caso más sencillo, supongamos que contamos con tres puntos no colineales definidos en el plano: $ \vec{P}_{1} $, $ \vec{P}_{2} $ y $ \vec{P}_{3} $. Éstos puntos, definen un triángulo, como puede verse en la fig. (\ref{fig:tri_simple}).
 
 \begin{figure}
 \centering
@@ -152,7 +152,7 @@ Comenzando con el caso más sencillo, supongamos que contamos con tres puntos de
 \caption{\label{fig:tri_simple} Triángulo formado por tres puntos $ \lbrace \vec{P}_{1}, \vec{P}_{2}, \vec{P}_{3}  \rbrace $}
 \end{figure}
 
-Además, cada uno de ellos puede contener información relativa a cualquier cantidad física de interés, es decir, sobre $ \vec{P}_{1} $ por ejemplo, podría encontrarse definida una cantidad vectorial cualquiera $ \vec{v}_{1}$, y para el resto de los puntos cualquier otra cantidad $ \vec{v}_{i=2,3} $. Debemos recordar, que estas cantidades físicas (estados) matemáticamente pueden representarse como escalares o vectores en el plano $xy$, tal como se mencionó en la sección \ref{sec:interpestados}. Por lo tanto, si sólo se conocen las magnitudes físicas sobre tales posiciones espaciales, ¿cómo podremos hallar la cantidad $ \vec{v}_{p} $ correspondiente a un punto $\vec{p}$ que se encuentre dentro del triángulo definido por $ \lbrace \vec{P}_{1}, \vec{P}_{2}, \vec{P}_{3}  \rbrace $? Para responder a ésto, utilizamos un método de interpolación que consiste en la utilización de coordenadas de áreas, también denominadas coordenadas baricéntricas, para luego obtener $ \vec{v}_{p} $ simplemente ponderando cada $ \vec{v}_{i=1,2,3} $ de acuerdo a su posición relativa a $ \vec{p} = \lbrace x,y \rbrace $, como se muestra en la ec. (\ref{eq:combinacionlinealtrixy}).
+Además, cada uno de ellos puede contener información relativa a cualquier cantidad física de interés, es decir, sobre $ \vec{P}_{1} $ por ejemplo, podría encontrarse definida una cantidad vectorial cualquiera $ \vec{v}_{1}$, y para el resto de los puntos cualquier otra cantidad $ \vec{v}_{i=2,3} $. Debemos recordar, que estas cantidades físicas (estados) matemáticamente pueden representarse como escalares o vectores en el plano $xy$, tal como se mencionó en la sección \ref{sec:interpestados}. Por lo tanto, si sólo se conocen las magnitudes físicas sobre tales posiciones espaciales, ¿cómo podremos hallar la cantidad $ \vec{v}_{p} $ correspondiente a un punto $\vec{p}$ que se encuentre dentro del triángulo definido por $ \lbrace \vec{P}_{1}, \vec{P}_{2}, \vec{P}_{3}  \rbrace $? Para responder a ésto, utilizamos un método de interpolación que consiste en la utilización de coordenadas de áreas, también denominadas coordenadas baricéntricas, para luego obtener $ \vec{v}_{p} $ simplemente ponderando cada $ \vec{v}_{i=1,2,3} $ de acuerdo a su posición relativa a $ \vec{p} = \lbrace x,y \rbrace $, como se muestra en la ec.(\ref{eq:combinacionlinealtrixy}).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{equation}
 \label{eq:combinacionlinealtrixy}  
@@ -162,8 +162,8 @@ Además, cada uno de ellos puede contener información relativa a cualquier cant
   N_{3}(\vec{p}) \cdot \vec{v_3} 
 \end{equation}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Las funciones de (\ref{eq:combinacionlinealtrixy}), $ N_{i} ( \vec{p} )$, se denominan \emph{funciones de forma} y provienen de la teoría clásica de elementos finitos que puede verse en ref. \cite{FE}.Éstas, deben hallarse de tal manera que, cuando $ \vec{p} = \vec{P}_{i} $, la salida de (\ref{eq:combinacionlinealtrixy}) sea exactamente $\vec{v}_{i}$.\\
-Si bien es correcto trabajar con las funciones $ N_{i} ( \vec{p} )$ basadas en las coordenadas $(x,y)$, nosotros hemos adoptado un cambio de variables o de coordenadas, ya que realizamos un mapeo de las coordenadas definidas en el plano $(x,y)$, hacia coordenadas $ (\xi, \eta) \in [0, 1] $, conocidas en la literatura como \emph{coordenadas naturales} (ver figura \ref{fig:tri}).
+Las funciones que se presentan en ec.(\ref{eq:combinacionlinealtrixy}), $ N_{i} ( \vec{p} )$, se denominan \emph{funciones de forma} y provienen de la teoría clásica de elementos finitos que puede verse en ref.\cite{FE}.Éstas deben cumplir con la condición de que, cuando $ \vec{p} = \vec{P}_{i} $, la salida del resultado de aplicar la ec.(\ref{eq:combinacionlinealtrixy}) sea exactamente $\vec{v}_{i}$.\\
+Si bien es correcto trabajar con las funciones $ N_{i} ( \vec{p} )$ basadas en las coordenadas $(x,y)$, nosotros hemos adoptado un cambio de variables o de coordenadas, ya que realizamos un mapeo de las coordenadas definidas en el plano $(x,y)$, hacia las coordenadas $ (\xi, \eta) \in [0, 1] $, conocidas en la literatura como \emph{coordenadas naturales} (ver figura \ref{fig:tri}).
 
 \begin{figure}
 \centering
@@ -171,7 +171,7 @@ Si bien es correcto trabajar con las funciones $ N_{i} ( \vec{p} )$ basadas en l
 \caption{\label{fig:tri} } Mapeo de un triángulo definido en $(x,y)$ a $(\xi, \eta) \in [0; 1]$.
 \end{figure}
 
- Entonces, para cualesquiera 3 puntos $ \lbrace \vec{P}_{1}, \vec{P}_{2}, \vec{P}_{3}  \rbrace $, tendremos que el mapeo nos producirá las relaciones definidas en la ec. (\ref{eq:verticesmastertri}).
+ Entonces, para cualesquiera 3 puntos $ \lbrace \vec{P}_{1}, \vec{P}_{2}, \vec{P}_{3}  \rbrace $, el mapeo nos producirá las relaciones definidas en la ec.(\ref{eq:verticesmastertri}).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{equation}
@@ -192,9 +192,9 @@ Si bien es correcto trabajar con las funciones $ N_{i} ( \vec{p} )$ basadas en l
 \end{equation}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-La ventaja de llevar a cabo el cambio de variables, radica en que podremos tratar a todo triángulo definido por tres puntos cualquiera, como un único triángulo estándar (denominado \emph{elemento máster}), que se encuentra acotado al intervalo $ [0; 1] $. En futuras aplicaciones de ésta técnica, se hará visible con mayor facilidad la ventaja, ya que a la hora de llevar a cabo integraciones numéricas, éstas operaciones no dependerán de la forma del triángulo, sino que harán uso del elemento máster. Además de independizarnos de la forma del triángulo, se podrá llevar a cabo la integración mediante el método de cuadratura gaussiana, que requiere que el integrando se encuentre definido en el intervalo $[-1,1]$.
+La ventaja de llevar a cabo el cambio de variables, radica en que podremos tratar a todo triángulo definido por tres puntos cualquiera, como un único triángulo estándar (denominado \emph{elemento master o maestro}), que se encuentra acotado al intervalo $ [0; 1] $. En futuras aplicaciones de ésta técnica, se hará visible con mayor claridad las ventajas de adoptar el sistema de coordenadas naturales, ya que a la hora de llevar a cabo integraciones numéricas, éstas operaciones se realizan sobre el elemento master. Se podrá llevar a cabo la integración numérica mediante el método de cuadratura gaussiana, que requiere que el integrando se encuentre definido en el intervalo $[-1,1]$.
 \\
-Ahora, teniendo en cuenta la ec. (\ref{eq:verticesmastertri}), vemos que las coordenadas $x$ e $y$, necesitan relacionarse funcionalmente con  $\xi$ y $\eta$, y lo inverso también es cierto, es decir: $x=x( \xi, \eta)$; $y=y( \xi, \eta)$; $\xi= \xi(x,y)$ y $\eta= \eta(x,y)$. Éstas relaciones son importantes, ya que nos permiten trasladarnos de un espacio a otro, pero por el momento estamos interesados en determinar $\xi= \xi(x,y)$ y $\eta= \eta(x,y)$, para luego evaluar las funciones de forma sobre los parámetros $(\xi, \eta)$. Por lo que se obtienen las siguientes relaciones para los parámetros $\xi(x,y)$ y $\eta(x,y)$ (ver ref.\cite{Hal}):
+Teniendo en cuenta la ec.(\ref{eq:verticesmastertri}), vemos que las coordenadas $x$ e $y$, necesitan relacionarse funcionalmente con  $\xi$ y $\eta$, y lo inverso también es cierto, es decir: $x=x( \xi, \eta)$; $y=y( \xi, \eta)$; $\xi= \xi(x,y)$ y $\eta= \eta(x,y)$. Éstas relaciones son importantes, ya que nos permiten trasladarnos de un espacio a otro, pero por el momento estamos interesados en determinar $\xi= \xi(x,y)$ y $\eta= \eta(x,y)$, para luego evaluar las funciones de forma sobre los parámetros $(\xi, \eta)$. Por lo que se obtienen las siguientes relaciones para los parámetros $\xi(x,y)$ y $\eta(x,y)$ (ver ref.\cite{Hal})
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{equation}
@@ -208,7 +208,7 @@ Ahora, teniendo en cuenta la ec. (\ref{eq:verticesmastertri}), vemos que las coo
 \end{equation}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Por otra parte, con las consideraciones mencionadas anteriormente llegamos a obtener las siguientes igualdades (ver en ref.\cite{Hirsch}) para las funciones de forma.
+Por otra parte, con las consideraciones mencionadas anteriormente llegamos a obtener las siguientes igualdades (ver ref.\cite{Hirsch}) para las funciones de forma
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{equation}
@@ -220,7 +220,7 @@ Por otra parte, con las consideraciones mencionadas anteriormente llegamos a obt
   \end{split}
 \end{equation}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Así, la ec. (\ref{eq:combinacionlinealtrixy}) se puede reescribir como sigue.
+Así, la ec.(\ref{eq:combinacionlinealtrixy}) se puede reescribir como sigue.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{equation}
   \label{eq:combinacionlinealtrichieta}  
@@ -274,8 +274,8 @@ Donde $(a_1, b_1)= \frac{(\vec{P_1} + \vec{P_2} + \vec{P_3} +
   \vec{P_4})}{4}$; $(a_2, b_2)=  \frac{(\vec{P_2} - \vec{P_1} + \vec{P_3} -
   \vec{P_4})}{4}$; $(a_3, b_3)= \frac{(\vec{P_3} - \vec{P_2} + \vec{P_4} -
   \vec{P_1})}{4} $; $(a_4, b_4)= \frac{(\vec{P_1} - \vec{P_2} + \vec{P_3} - \vec{P_4})}{4}$. \\ \\
-Como la forma cerrada de $\xi= \xi(x,y)$ y $\eta= \eta(x,y)$ que se obtiene al resolver la ec. (\ref{eq:mapeoinversocuadrado}) es algo extensa, preferimos no incluirlas para mantener la legibilidad del documento. \\
-Nuevamente, para determinar si un punto dado definido en el plano $(x,y)$ se encuentra dentro del cuadrado $[-1; 1]$, es necesario aplicar un método de verificación sencillo: básicamente, si [$(\xi$, $\eta) <  -1$] ó [$(\xi$, $\eta) >  1  $], el punto no se encuentra dentro del cuadrilátero y no deberá calcularse ninguna magnitud sobre él. En cuanto a las funciones de forma, las cuales se modifican para calcularse sobre las nuevas variables $(\xi, \eta)$, poseen las siguientes expresiones.
+Como la forma cerrada de $\xi= \xi(x,y)$ y $\eta= \eta(x,y)$ que se obtiene al resolver la ec. (\ref{eq:mapeoinversocuadrado}) es algo extensa, preferimos no incluirlas para mantener la legibilidad del documento. Sin embargo el lector interesado puede profundizar sobre el tema en ref.\cite{Hal} \\
+Nuevamente, para determinar si un punto dado en el plano $(x,y)$ se encuentra dentro del cuadrado $[-1; 1]$, es necesario aplicar un método de verificación sencillo: básicamente, si [$(\xi$, $\eta) <  -1$] ó [$(\xi$, $\eta) >  1  $], el punto no se encuentra dentro del cuadrilátero y no deberá calcularse ninguna magnitud sobre él. En cuanto a las funciones de forma, las cuales se modifican para calcularse sobre las nuevas variables $(\xi, \eta)$, poseen las siguientes expresiones.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{equation}
@@ -289,7 +289,7 @@ Nuevamente, para determinar si un punto dado definido en el plano $(x,y)$ se enc
 \end{equation}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Las funciones de forma en ec. (\ref{eq:ffcuadechieta}) permiten modificar a la ecuación (\ref{eq:combinacionlinealcuaxy}), para reescribirla de la siguiente manera:
+Las funciones de forma en ec.(\ref{eq:ffcuadechieta}) permiten modificar a la ecuación (\ref{eq:combinacionlinealcuaxy}), para reescribirla de la siguiente manera:\text{ICONE}=
 
 \begin{equation}
 \label{eq:vdechieta}  
@@ -326,7 +326,7 @@ Para poder representar un conjunto de polígonos (triángulos, cuadrados, etc) c
   \end{bmatrix}
 \end{equation}
 
-Las matrices XNODE e ICONE (llamadas así en la literatura), representan perfectamente un conjunto de polígonos en el espacio, porque condensan tanto la información de los vértices como las conectividades entre sí. Mediante ellas, podemos representar mallas como la que se observa en la figura \ref{fig:malla1}, en la cual puede observarse que con la utilización de una misma estructura de datos pueden representarse mallas de diferentes características. Ahora supongamos que la malla de cuadriláteros, contiene en sus nodos alguna cantidad física como temperaturas, mientras que la malla azul no tiene sus temperaturas o posee valores no actualizados. En primer instancia podríamos decir que aquellos nodos donde ambas mallas tienen coincidencia exacta, no necesitan actualización ya que se encuentran espacialmente en el mismo lugar. Sin embargo, ¿que sucede con aquellos vértices como el $(3;2.5)$ de la malla triangular? Necesitamos de alguna manera saber la temperatura en ese punto en función de los vértices mas cercanos de la malla cuadrada, que es la que contiene la información física. Para conseguir esto, se utilizará la denominada \emph{interpolación bilineal} para cuadriláteros, donde a partir de los nodos del cuadrilátero que contiene al vértice de interés, se mapea el punto resolviendo la ecuación (\ref{eq:mapeoinversocuadrado}), y luego con las coordenadas naturales se interpolan las temperaturas con la ec. (\ref{eq:vdechieta}).
+Las matrices XNODE e ICONE representan perfectamente un conjunto de polígonos en el espacio, porque condensan tanto la información de los vértices como las conectividades entre sí. Mediante ellas, podemos representar mallas no estructuradas como la que se observa en la figura \ref{fig:malla1}, en la cual puede observarse que con la utilización de una misma estructura de datos pueden representarse mallas de diferentes características. Por otro lado, supongamos que la malla de cuadriláteros contiene en sus nodos alguna cantidad física como temperaturas, mientras que la malla triangular no posee valores actualizados de la misma. En primera instancia podríamos decir que aquellos nodos donde ambas mallas tienen coincidencia exacta, no necesitan de ninguna interpolación ya que se encuentran espacialmente en el mismo lugar. Sin embargo, ¿qué sucede con aquellos vértices como el $(3;2.5)$ de la malla triangular? Necesitamos de alguna manera saber la temperatura en ese punto en función de los vértices mas cercanos de la malla de cuadriláteros, que es la que contiene la información física. Para conseguir esto, se utilizará la denominada \emph{interpolación bilineal} para cuadriláteros, donde a partir de los nodos del cuadrilátero que contiene al vértice de interés, se mapea el punto resolviendo la ecuación (\ref{eq:mapeoinversocuadrado}), y luego con las coordenadas naturales se interpolan las temperaturas con la ec.(\ref{eq:vdechieta}).
 
 
 \begin{figure}
@@ -342,11 +342,12 @@ Estas mismas ideas pueden aplicarse sin inconvenientes para, por ejemplo, mallas
   \vec{P} = (1-\alpha)\vec{P_1} + \alpha\vec{P_2} \qquad \alpha\in[0,1]
 \end{equation}
 
-Obsérvese en la ecuación que se está interpolando entre las coordenadas de dos puntos, pero esta misma expresión puede aplicarse para interpolar las temperaturas que tienen esos dos puntos.
-Una pregunta que podría surgir en este punto es ¿cómo representar las cantidades físicas de los nodos en una malla? Pues con las matrices XNODE e ICONE podemos conocer perfectamente la estructura de la malla, así que podríamos agregar una tercer matriz que indique para cada nodo, la cantidad física que le corresponde:
+Obsérvese en la ec.(\ref{eq:interpolacionlineal}) que se está interpolando entre las coordenadas de dos puntos, pero esta misma expresión puede aplicarse para interpolar las temperaturas que tienen esos dos puntos.
+Una pregunta que podría surgir en esta instancia es ¿cómo representar las cantidades físicas de los nodos en una malla? Dado que con las matrices XNODE e ICONE conocemos perfectamente la estructura de la malla agregamos una tercer matriz que indique para cada nodo, la cantidad física que le corresponde:
 
 \begin{equation}
   \label{eq:estados}
+  \text{STATE}=
   \begin{bmatrix}
     n'_{1} & \vec{e}_{1} \\
     \vdots & \vdots \\
@@ -359,11 +360,11 @@ La primer columna de esta matriz indica los nodos, donde es necesario aclarar qu
 
 \section{Introducción a la Mecánica de Fluidos}
 
-	En Mecánica de fluidos, se suelen estudiar diversos temas que se centran en lo que se denomina \emph{flujo}. Según \cite{Hirsch} el flujo es una cantidad fundamental asociada a una variable $U$ y definida como la cantidad de $U$ que atraviesa una determinada superficie por unidad de tiempo. Básicamente, los flujos pueden presentarse en dos regímenes completamente diferentes: flujo laminar o flujo turbulento. Los laminares se caracterizan porque las partículas de fluido se mueven de manera ordenada, en láminas, en la dirección de la corriente y sin generar flujos ni movimientos transversales. Este tipo de flujos aparece cuando la viscosidad es el fenómeno de transporte dominante, lo cual permite atenuar cualquier tipo de perturbación que puede alterar al flujo. Por el contrario, los flujos turbulentos se caracterizan por presentar fluctuaciones aleatorias de los campos de presión y velocidad, tanto en el tiempo como en el espacio. Estas fluctuaciones provienen de inestabilidades del flujo que en forma de cascada de energía generan vórtices cada vez más pequeños hasta que se disipan en forma de calor por la acción de la viscosidad.
+	En Mecánica de fluidos, se estudian diversos temas centrados en lo que se denomina \emph{flujo de fluidos}. Según \cite{Hirsch} el flujo es una cantidad fundamental asociada a una variable $U$ y definida como la cantidad de $U$ que atraviesa una determinada superficie por unidad de tiempo. Básicamente, los flujos pueden presentarse en dos regímenes completamente diferentes: flujo laminar o flujo turbulento. Los laminares se caracterizan porque las partículas de fluido se mueven de manera ordenada, en láminas, en la dirección de la corriente y sin generar flujos ni movimientos transversales. Este tipo de flujos aparece cuando la viscosidad es el fenómeno de transporte dominante, lo cual permite atenuar cualquier tipo de perturbación que puede alterar al flujo. Por el contrario, los flujos turbulentos se caracterizan por presentar fluctuaciones aleatorias de los campos de presión y velocidad, tanto en el tiempo como en el espacio. Estas fluctuaciones provienen de inestabilidades del flujo que en forma de cascada de energía generan vórtices cada vez más pequeños hasta que se disipan en forma de calor por la acción de la viscosidad.
 
-\section{Análisis de librerías estándar C++}
+\section{Análisis de librerías C++}
 
-	Según la investigación bibliográfica que se ha llevado a cabo, se considera que la librería Eigen es la mejor candidata a ser seleccionada para codificar de manera eficiente las distintas herramientas detalladas anteriormente. Es de destacar, que la elección ha sido basada en benchmarks publicados en internet (ver ref. \cite{chino} y \cite{chino2}), donde se han puesto a prueba las distintas librerías de manejo de sistemas lineales algebráicos. Otros criterios que se utilizaron para seleccionar la misma son: vigencia, soporte, y proyección a futuro. 
+	Según la investigación bibliográfica que se ha llevado a cabo entre las diferentes librerías disponibles tales como: Armadillo, BLAS, OpenBLAS, OpenCV, STL (standard de C++), Boost, Eigen, ANN (Approximate Nearest Neighbours), se considera que las librerías Eigen, STL, Boost y ANN son las mejores candidatas a ser seleccionadas para codificar de manera eficiente las distintas herramientas detalladas anteriormente. Es de destacar, que la elección particular de Eigen ha sido basada en benchmarks publicados en internet (ver ref. \cite{chino} y \cite{chino2}), donde se han puesto a prueba las distintas librerías de manejo de sistemas lineales algebráicos. Otros criterios que se utilizaron para seleccionar la misma son: vigencia, soporte, y proyección a futuro. Las otras librerías han sido sugeridas por los directores.
 
 
 \begin{thebibliography}{X}
