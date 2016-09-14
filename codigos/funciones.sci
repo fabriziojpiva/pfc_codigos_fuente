@@ -1,6 +1,8 @@
 clc;
 clear all;
 close;
+
+tol = 1e-6;
 //Funcion para pre-plotear las mallas, donde entran las matrices de la malla y salen todas las
 //rectas a plotear para visualizar el mallado
 function [X,Y] = procesar_malla_2D(xnode, icone)   
@@ -93,11 +95,11 @@ function [chi,eta] = mapear_cuad_2D(punto, C)
     x0 = a(1) - punto(1);
     y0 = b(1) - punto(2);
     
-    if (a(4) ~=0 & a(2) ~=0) then
+    if ( abs(a(4))>= tol & abs(a(2)) >=tol ) then //preguntando si es distinto de cero
         eta = ( -a(2) )/a(4);
         chi = ( y0*a(4) + a(2)*b(3) ) / (a(4)*b(2) - a(2)*b(4) ) ;
     end
-    if (a(4) ==0 & a(2) == 0) then
+    if (abs(a(4) )<tol & abs(a(2))<tol) then //preguntando si es igual a cero
         eta = ( x0 )/a(3);
         chi = ( y0*a(3) - x0*b(3) ) / (a(3)*b(2) + x0*b(4) ) ;
     else
@@ -105,7 +107,7 @@ function [chi,eta] = mapear_cuad_2D(punto, C)
         B = ( y0*a(4) + a(2)*b(3) ) - ( x0*b(4) + a(3)*b(2) ) ;
         K = y0*a(2) - x0*b(2) ;
 
-        if (A ~= 0) then
+        if ( abs(A) >= tol ) then //distinto de cero
             disc = B*B - 4*A*K ;
             if (disc<0) then
                 eta = -99;
@@ -114,7 +116,7 @@ function [chi,eta] = mapear_cuad_2D(punto, C)
                 eta = (-B + sqrt(disc) ) / (2*A) ;
                 chi = ( -(x0 + a(3)*eta) )/(a(2) + a(4)*eta )  ;
             end
-        else
+        else // caso de si A = 0.
             eta = -K/B;
             chi = ( -(x0 + a(3)*eta) )/(a(2) + a(4)*eta )  ;
         end
@@ -133,23 +135,29 @@ function r = verificar_tri_2D(punto , T)
     [chi,eta] = mapear_tri_2D(punto , T);
     if (chi<0 | eta<0 | chi>1 | eta>1 )
         r = -1 ;
-    elseif((chi==1 & eta==0)|(chi==0 & eta==1))  //VERIFICAR SI EL PUNTO (punto) ES UN NODO (osea, si es una fila de T))
+    elseif(( abs(chi-1)<tol & abs(eta)<tol )|( abs(chi)<tol & abs(eta-1)<tol ))  //VERIFICAR SI EL PUNTO (punto) ES UN NODO (osea, si es una fila de T))
         r=1;
     else
         r = ( 1 - chi - eta) / abs(1 - chi - eta);
     end
 endfunction
 
-// verifica si un punto está o no dentro del cuadrado, utilizando elemento master para abaratar
-// el costo computacional. Se mapea el punto al elemento master, y se tienen que cumplir que las
-// coordenadas (chi,eta) del punto mapeado estén dentro del elemento master.
-// Convención: si pertenece, r = 1, sino r = -1.
+// verifica si un punto está o no dentro del cuadrado, mediante la técnica de los productos cruces:
+//se hace el producto cruz entre cada arista del polígono con el vector formado por la diferencia
+//entre el punto en cuestión y el primer vértice de la arista.
+//el punto es un vector fila y cada fila de la matriz C tiene las coordenadas de cada vértice del
+//cuadrado.
 function r=verificar_cuad_2D(punto, C)
-    [chi,eta] = mapear_cuad_2D(punto , C);
+    C(5,:) = C(1,:);
     r=1;
-    if(chi<-1 | eta<-1 | chi>1 | eta>1)
-        r=-1;
-    end
+    i=1;
+    while(r~=(-1) & i<=4)
+        k = cruz( C(i+1,:) - C(i,:) , punto - C(i,:) );
+        if (k(3) < 0) then
+            r=-1;
+        end
+        i = i + 1;
+        end 
 endfunction
 
 // Verifica si un punto pertenece a un segmento. Para ello, se arma el vector diferencia de los
@@ -234,7 +242,7 @@ function v=buscar_estado(indices_nodos,estados_conocidos)
     for i=1:m
         for j=1:n
             if(estados_conocidos(j,1)==indices_nodos(1,i))
-                v=[v;estados_conocidos(j,2:$)']; //Aqui se hace una copia desde la columna 2 en
+                v=[v;estados_conocidos(j,2:$)]; //Aqui se hace una copia desde la columna 2 en
                                                  //adelante porque se considera que la primer
                                                  //columna es para decir que nodo es, y las columnas
                                                  //restantes el dato del estado (sea vector u

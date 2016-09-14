@@ -23,7 +23,7 @@ icone1 = [1 2 9;
          9 10 11;
          9 7 8;
          1 9 8];
-estados1  = [ [1:size(xnode1,1)]' , ones(size(xnode1,1),1)*3 ];
+estados1  = [ [1:size(xnode1,1)]' , ones(size(xnode1,1),3)*3 ];
 //--------------------         
 xnode2 = [1.5 0.5 0;
           2 0.5 0;
@@ -49,7 +49,7 @@ icone2 = [1 2 11 10;
           13 14 7 8;
           10 11 8 9  
             ] ;
-estados2  = [ [1:size(xnode2,1)]' , ones(size(xnode2,1),1)*(-1) ];
+estados2  = [ [1:size(xnode2,1)]' , ones(size(xnode2,1),3)*(-1) ];
 //------------------            
 xnode3 = [1 0.5 0;
           2 0.5 0;
@@ -76,7 +76,7 @@ icone3 = [//1 2 9;
           //1 9 8
             ];
 // estados3 MODIFICADO PARA QUE SEA MALLA CONOCIDA CON FUNCION SIN(X*Y).
-estados2  = [ [1:size(xnode2,1)]' , ( 0.5*xnode2(:,1)+xnode2(:,2)) ];
+estados3  = [ [1:size(xnode2,1)]' , ( 0.5*xnode2(:,1)+xnode2(:,2)) ];
 
 xnode4=[1.5 4 0;
         2.5 6 0;
@@ -96,7 +96,7 @@ icone4=[1 2;
         6 7;
         ];
 
-estados4  = [ [1:size(xnode4,1)]' , ones(size(xnode4,1),1).*(-1) ];
+estados4  = [ [1:size(xnode4,1)]' , ones(size(xnode4,1),3).*(-1)];
 
 xnode5=[ 1 1 0;
          2 2.5 0;
@@ -115,7 +115,7 @@ icone5=[//1 2;
         //6 7
         ];
 
-estados5  = [ [1:size(xnode5,1)]' , ones(size(xnode5,1),1).*100 ];
+estados5  = [ [1:size(xnode5,1)]' , ones(size(xnode5,1),3).*5 ];
 
 DIR = get_absolute_file_path("mallas.sci") ;
 save(DIR + "mallas.sod");
