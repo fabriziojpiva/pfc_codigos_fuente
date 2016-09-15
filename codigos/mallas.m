@@ -24,7 +24,7 @@ icone1 = [1 2 9;
          9 7 8;
          1 9 8];
 estados1  = [ [1:size(xnode1,1)]' , ones(size(xnode1,1),3)*3 ];
-//--------------------         
+%--------------------         
 xnode2 = [1.5 0.5 0;
           2 0.5 0;
           3 0.5 0;
@@ -50,7 +50,7 @@ icone2 = [1 2 11 10;
           10 11 8 9  
             ] ;
 estados2  = [ [1:size(xnode2,1)]' , ones(size(xnode2,1),3)*(-1) ];
-//------------------            
+%------------------            
 xnode3 = [1 0.5 0;
           2 0.5 0;
           3 0.5 0;
@@ -63,19 +63,19 @@ xnode3 = [1 0.5 0;
           2 1.5 0 ;
           3 1.5 0
             ];
-icone3 = [//1 2 9;
+icone3 = [%1 2 9;
           2 3 9;
           3 11 9;
-          //3 4 11;
-          //11 4 5;
+          %3 4 11;
+          %11 4 5;
           11 5 6;
           11 6 7;
           10 11 7;
           10 7 8;
           9 10 8
-          //1 9 8
+          %1 9 8
             ];
-// estados3 MODIFICADO PARA QUE SEA MALLA CONOCIDA CON FUNCION SIN(X*Y).
+% estados3 MODIFICADO PARA QUE SEA MALLA CONOCIDA CON FUNCION SIN(X*Y).
 estados3  = [ [1:size(xnode2,1)]' , ( 0.5*xnode2(:,1)+xnode2(:,2)) ];
 
 xnode4=[1.5 4 0;
@@ -107,15 +107,15 @@ xnode5=[ 1 1 0;
          10 5.5 0
          ];
          
-icone5=[//1 2;
+icone5=[%1 2;
         2 3;
         3 4;
         4 5;
         5 6;
-        //6 7
+        %6 7
         ];
 
 estados5  = [ [1:size(xnode5,1)]' , ones(size(xnode5,1),3).*5 ];
 
-DIR = get_absolute_file_path("mallas.sci") ;
-save(DIR + "mallas.sod");
+DIR = make_absolute_filename("mallas.m") ;
+save( strcat(DIR,"at") );
