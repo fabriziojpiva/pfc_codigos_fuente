@@ -117,5 +117,34 @@ icone5=[%1 2;
 
 estados5  = [ [1:size(xnode5,1)]' , ones(size(xnode5,1),3).*5 ];
 
+## Test de Boer: mallas.
+
+cells = 1000;
+
+k=log2( (cells-1)/5 );
+k = round(k);
+
+#xs= linspace( -0.5, 0.5, 2^k * 7 + 1); Paper de Boer
+xs= linspace( -0.5, 0.5, 2^k * 5 + 1 ); #
+ys= 0.2*sin( 2*pi.*xs);
+
+xf = linspace( -0.5, 0.5, 2^k * 26 + 1);
+yf= 0.2*sin( 2*pi.*xf);
+
+
+xnode_s=[xs' ys' zeros(length(xs),1)];
+xnode_f=[xf' yf' zeros(length(xf),1)];
+
+icone_s= [ [1:length(xs)-1]' , [2:length(xs)]' ];
+icone_f= [ [1:length(xf)-1]' , [2:length(xf)]' ];
+
+u_s= 0.01*cos( 2*pi.*xs) ;
+p_f= 0.01*cos( 2*pi.*xf) ;
+
+state_s = [ [1:length(xs)]' , u_s' ];
+state_f = [ [1:length(xf)]' , ones(length(xf),1)*(-1)  ];
+
+## Fin de test de Boer.
+
 DIR = make_absolute_filename("mallas.m") ;
 save( strcat(DIR,"at") );
