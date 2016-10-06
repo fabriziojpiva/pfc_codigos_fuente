@@ -1,4 +1,4 @@
-function datos=verificar_2D_normales(punto,X,vecinos,modo)
+function datos=verificar_2D_normales(punto,elemento,vecinos,modo)
 
   switch(modo)
   case (0)

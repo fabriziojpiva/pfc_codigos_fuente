@@ -3,8 +3,8 @@ load("mallas.mat");
 
 global tol = 1e-6;
 
-[dominio1,imagen1] = procesar_malla_2D(xnode1 , icone1);
-[dominio2,imagen2] = procesar_malla_2D(xnode2 , icone2);
+[dominio1,imagen1] = procesar_malla_2D(xnode4 , icone4);
+[dominio2,imagen2] = procesar_malla_2D(xnode5 , icone5);
 
 
  axis([0, 5, 0, 5]); 
@@ -21,7 +21,7 @@ for k=1:size(dominio2,1)
 end
 hold off;
 
-estados=calcular_estado(icone1,xnode1,estados1,xnode2,estados2);
+estados=calcular_estado(icone4,xnode4,estados4,xnode5,estados5);
 %p1=[0;3];
 %p2=[2;3];
 %p3=[4;3];

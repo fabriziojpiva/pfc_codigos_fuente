@@ -22,17 +22,19 @@ end
 hold off;
 
 # estados=calcular_estado(icone_s,xnode_s,state_s,xnode_f,state_f);
+estados=calcular_estado_normales(icone_s,xnode_s,state_s,xnode_f,state_f,0);
 
 # Calculo de error en test de Boer:
 
-%exact = 0.01*cos(2*pi.*xf(1:length(xf)) );
-%den = exact*exact';
-%dif = estados(1:length(xf),2)-exact';
-%num= dif'*dif;
-%error= sqrt(num/den);
+exact = 0.01*cos(2*pi.*xf(1:length(xf)) );
+den = exact*exact';
+dif = estados(1:length(xf),2)-exact';
+num= dif'*dif;
+error= sqrt(num/den);
 
 # Grafico de la funcion error:
 
 figure;
 semilogy( 2.^([0 1 2 3 4 5])*5 +1 , [0.16707 0.043912 0.011274 0.0028384 7.1174e-4 1.7818e-4]);
-
+hold on;
+semilogy( 2.^([0 1 2 3 4 5])*5 +1 , [0.16949 0.044183 0.011285 0.0028392 7.1179e-4 1.7818e-4]);
