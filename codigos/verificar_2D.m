@@ -2,6 +2,7 @@
 %Funcion que verifica si el punto pertenece al elemento en cuestión. El elemento puede ser un
 %segmento, triangulo o cuadrado. Convención: si pertenece, r = 1, sino r = -1.
 function r=verificar_2D(punto, M)
+global tol;
     n=size(M,1); %extraer cantidad de filas.
     switch(n)
     case (2) 
