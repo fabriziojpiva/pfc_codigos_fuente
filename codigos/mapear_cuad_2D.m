@@ -1,55 +1,32 @@
-% mapeo de un punto en coordenadas (x,y) al elemento master da coordenadas (chi,eta) donde
-% (chi,eta) pertenece a [-1,1]. Se plantea una interpolación bilineal, con parámetros chi y eta,
-% quedando una formula bilineal en las variables chi y eta tanto en x como en y. Luego se
-% despeja de una el valor de chi, y se reemplaza en la otra, para que queden dos fórmulas
-% explícitas para chi y eta. Esta fórmula explícita, tiene forma de ecuación cuadrática (Ax^2 +
-% Bx + C), que se resuelve por la fórmula de la resolvente. También recordemos que hay casos
-% particulares (donde A=0 por ejemplo) que se consideran para evitar divisiones por cero o un
-% discriminante negativo.
-% Por convención, un punto que no pertence al cuadrado será mapeado a las coordenadas chi=-99 y
-% eta= -99.
-function [chi,eta] = mapear_cuad_2D(punto, C) 
-    p1 = [C(1,:) ]';
-    p2 = [C(2,:) ]';
-    p3 = [C(3,:) ]';
-    p4 = [C(4,:) ]';
-    %Los siguientes coeficientes son los resultantes de plantear la interpolación bilineal, es
-    %decir, la fórmula bilineal tiene la forma: x = a_1 + a_2*chi + a_3*eta + a_4*chi*eta. Lo
-    %mismo para y pero usando los coeficientes b_1,b_2,b_3 y b_4. Esta matriz coefs contiene los
-    %coeficientes a_i y los b_i. Recordemos que cada punto es una columna.
-    coefs = [ (1/4)*(p1 + p2 +p3 + p4) , (1/4)*(p2 - p1 + p3 - p4) , (1/4)*(p3 - p2 + p4 - p1), (1/4)*(p1 - p2 + p3 - p4)] ;
-    a = coefs(1,:);    
-    b = coefs(2,:);
-    %Lo siguientes es para resolver la ecuación cuadrática y todas las particularidades
-    %posibles. Para ver la parte teórica, consultar el pdf de bibliografía.
-    x0 = a(1) - punto(1);
-    y0 = b(1) - punto(2);
-    
-    if ( abs(a(4))>= tol && abs(a(2)) >=tol )  %preguntando si es distinto de cero
-        eta = ( -a(2) )/a(4);
-        chi = ( y0*a(4) + a(2)*b(3) ) / (a(4)*b(2) - a(2)*b(4) ) ;
-    endif
-    if (abs(a(4) )<tol && abs(a(2))<tol)  %preguntando si es igual a cero
-        eta = ( x0 )/a(3);
-        chi = ( y0*a(3) - x0*b(3) ) / (a(3)*b(2) + x0*b(4) ) ;
-    else
-        A = a(4)*b(3) - a(3)*b(4);
-        B = ( y0*a(4) + a(2)*b(3) ) - ( x0*b(4) + a(3)*b(2) ) ;
-        K = y0*a(2) - x0*b(2) ;
+%% punto = punto sobre el que se quiere realizar la inversion (es un vector fila de 1x2).
+%% X es una matriz de 4x2 que contiene las coordenadas de los nodos (X(i,:)=(xi,yi)).
+function [chi,eta]=mapeo_inverso_bilineal(punto,X)
+p1=X(1,:);
+p2=X(2,:);
+p3=X(3,:);
+p4=X(4,:);
 
-        if ( abs(A) >= tol )  %distinto de cero
-            disc = B*B - 4*A*K ;
-            if (disc<0) 
-                eta = -99;
-                chi = -99;
-            else
-                eta = (-B + sqrt(disc) ) / (2*A) ;
-                chi = ( -(x0 + a(3)*eta) )/(a(2) + a(4)*eta )  ;
-            endif
-        else % caso de si A = 0.
-            eta = -K/B;
-            chi = ( -(x0 + a(3)*eta) )/(a(2) + a(4)*eta )  ;
-        endif
-    endif
-   
+%% calculo de chi mediante la resolucion de la ecuacion cuadratica
+
+C_chi=cruz2D(punto,p4+p3-p1-p2)+.5*cruz2D(p4+p3,p1+p2);
+B_chi=cruz2D(punto,(p3-p4-p2+p1))+cruz2D(p3,p2)+cruz2D(p1,p4);
+A_chi=.5*cruz2D(p3-p4,p2-p1);
+
+if(B_chi>0)
+    chi=(-B_chi+sqrt(B_chi*B_chi-4*A_chi*C_chi))/(2*A_chi);
+else
+    chi=2*C_chi/(-B_chi+sqrt(B_chi*B_chi-4*A_chi*C_chi));
+end
+
+%% Calculo de eta resolviendo lo siguiente: (todos los vectores son columna)
+%% U = .5*(1-eta)*p12+.5*(1+eta)*p43.
+%%   = .5*(p43+p12)+.5*(p43-p12)*eta.
+
+%% Y hacemos el producto escalar miembro a miembro con delta=(p43-p12) para despejar eta.
+
+p43=.5*(p4+p3+(p3-p4)*chi)';
+p12=.5*(p2+p1+(p2-p1)*chi)';
+delta=(p43-p12);
+eta=(((2*punto)-(p43+p12)')*delta)/(delta'*delta);
+
 endfunction
