@@ -119,7 +119,7 @@ estados5  = [ [1:size(xnode5,1)]' , ones(size(xnode5,1),3).*5 ];
 
 ## Test de Boer: mallas.
 
-k = 0;
+k = 6;
 
 #xs= linspace( -0.5, 0.5, 2^k * 7 + 1); Paper de Boer
 xs= linspace( -0.5, 0.5, 2^k * 5 + 1 ); #
@@ -138,8 +138,11 @@ icone_f= [ [1:length(xf)-1]' , [2:length(xf)]' ];
 u_s= 0.01*cos( 2*pi.*xs) ;
 p_f= 0.01*cos( 2*pi.*xf) ;
 
-state_s = [ [1:length(xs)]' , u_s' ];
-state_f = [ [1:length(xf)]' , ones(length(xf),1)*(-1)  ];
+%state_s = [ [1:length(xs)]' , u_s' ];
+%state_f = [ [1:length(xf)]' , ones(length(xf),1)*(-1)  ];
+
+state_s = [ [1:length(xs)]' , ones(length(xs),1)*(-1) ];
+state_f = [ [1:length(xf)]' , p_f'];
 
 ## Fin de test de Boer.
 
