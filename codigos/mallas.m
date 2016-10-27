@@ -119,7 +119,7 @@ estados5  = [ [1:size(xnode5,1)]' , ones(size(xnode5,1),3).*5 ];
 
 ## Test de Boer: mallas.
 
-k = 0;
+k = 1;
 
 #xs= linspace( -0.5, 0.5, 2^k * 7 + 1); Paper de Boer
 xs= linspace( -0.5, 0.5, 2^k * 5 + 1 ); #
