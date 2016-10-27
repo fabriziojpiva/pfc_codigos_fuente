@@ -1,4 +1,6 @@
-
+%clc;
+%clear all;
+%close all;
 load("mallas.mat");
 
 global tol = 1e-6;
@@ -21,15 +23,16 @@ for k=1:size(dominio2,1)
 end
 hold off;
 
-# estados=calcular_estado(icone_s,xnode_s,state_s,xnode_f,state_f);
-estados=calcular_estado_normales(icone_s,xnode_s,state_s,xnode_f,state_f,1);
-
+% estados=calcular_estado(icone_f,xnode_f,state_f,xnode_s,state_s);
+%estados=calcular_estado_normales(icone_s,xnode_s,state_s,xnode_f,state_f,1);
+estados=calcular_estado_normales(icone_f,xnode_f,state_f,xnode_s,state_s,0);
 # Calculo de error en test de Boer:
 
-exact = 0.01*cos(2*pi.*xf(1:length(xf)) );
+exact = 0.01*cos(2*pi.*xs(1:length(xs)) );
 den = exact*exact';
-dif = estados(1:length(xf),2)-exact';
+dif = estados(1:length(xs),2)-exact';
 num= dif'*dif;
+<<<<<<< HEAD
 error= sqrt(num/den);
 
 # Grafico de la funcion error:
@@ -46,3 +49,24 @@ loglog( 2.^([0 1 2 3 4 5])*5 +1 , [0.16978 0.044198 0.011286 0.0028393 7.1179e-4
 
 h = legend ({'Proy. Geo.'}, 'PNU', 'PNNU');
 %legend (h, 'location', 'northeastoutside');
+=======
+error= sqrt(num/den)
+
+# Calculo de error integral. El valor exacto es 0.
+% Estados aroximados:
+
+I=integrar(xnode_s,estados);
+
+%# Grafico de la funcion error:
+%
+%figure;
+%# Errores de proyeccion nuestra
+%loglog( 2.^([0 1 2 3 4 5])*5 +1 , [0.16707 0.043912 0.011274 0.0028384 7.1174e-4 1.7818e-4]);
+%legend("Proyeccion s/n");
+%figure;
+%loglog( 2.^([0 1 2 3 4 5])*5 +1 , [0.16949 0.044183 0.011285 0.0028392 7.1179e-4 1.7818e-4]);
+%legend("Proyeccion N & P");
+%figure;
+%loglog( 2.^([0 1 2 3 4 5])*5 +1 , [0.16978 0.044198 0.011286 0.0028393 7.1179e-4 1.7818e-4]);
+%legend("Proyeccion P & N");
+>>>>>>> origin/master
