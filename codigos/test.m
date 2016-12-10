@@ -3,8 +3,8 @@ load("mallas.mat");
 
 global tol = 1e-6;
 
-[dominio1,imagen1] = procesar_malla_2D(xnode_s , icone_s);
-[dominio2,imagen2] = procesar_malla_2D(xnode_f , icone_f);
+[dominio1,imagen1] = procesar_malla_2D(xnode4 , icone4);
+[dominio2,imagen2] = procesar_malla_2D(xnode5 , icone5);
 
 
  axis([0, 5, 0, 5]); 

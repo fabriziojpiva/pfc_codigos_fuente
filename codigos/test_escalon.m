@@ -57,8 +57,15 @@ tiempo=toc
 
 
 
-# Calculo de error en test de Boer:
-exact = 0.01*cos(2*pi.*xf);
+# Calculo de error en test de funcion escalon:
+exact=zeros(1,length(xf));
+for i=1:length(xf)
+  if(xf(i)<0)
+    exact(i)=0;
+  else
+    exact(i)=1;
+  end
+end
 den = exact*exact';
 dif = estados(1:length(xf),2)-exact';
 num= dif'*dif;
@@ -68,7 +75,7 @@ error= sqrt(num/den)
 % Estados aroximados:
 I=integrar(icone_f,xnode_f,estados);
 disp("Error integral");
-I
+abs(I-.5)
 
 curva_error=abs(exact-estados(:,2)');
 

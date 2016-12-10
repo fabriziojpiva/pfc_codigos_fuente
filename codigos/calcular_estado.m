@@ -18,7 +18,7 @@ function estados=calcular_estado(icone_conocido,xnode_conocido,estados_conocidos
             % verificar controla que el punto pertenezca al j-esimo elemento. Si verificar=1 pertenece, Si verificar=-1 NO pertenece.
             % punto es el nodo de la malla con estados desconocidos.
             % X es el conjunto de coordenadas de los nodos, ya sea de triangulo (matriz de 3x2) o cuadrilatero (matriz de 4x2)
-            verificacion=verificar_2D(punto,X);
+            [~,verificacion]=verificar_2D(punto,X);
             j=j+1;
         endwhile
         % buscar estado en estados_conocidos.

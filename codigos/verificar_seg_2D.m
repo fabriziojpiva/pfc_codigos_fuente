@@ -6,7 +6,7 @@
 % vector diferencia es menor al módulo de ese vector diferencia, entonces se lo considera
 % adentro. Convención: si pertenece, r = 1, sino r = -1.
 
-function r=verificar_seg_2D(punto,M)
+function [alpha,r]=verificar_seg_2D(punto,M)
 global tol;
     r=-1;
     v=punto'-M(1,:); % v es vector fila. Es el vector que va desde P1 hasta el punto en cuestion.

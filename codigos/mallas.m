@@ -119,14 +119,11 @@ estados5  = [ [1:size(xnode5,1)]' , ones(size(xnode5,1),3).*5 ];
 
 ## Test de Boer: mallas.
 
-<<<<<<< HEAD
-k = 1;
-=======
-k = 6;
->>>>>>> origin/master
+k = 7;
 
 #xs= linspace( -0.5, 0.5, 2^k * 7 + 1); Paper de Boer
 xs= linspace( -0.5, 0.5, 2^k * 5 + 1 ); #
+%xs= linspace( -0.5, 0.5, 20 ); #
 ys= 0.2*sin( 2*pi.*xs);
 
 xf = linspace( -0.5, 0.5, 2^k * 26 + 1);
@@ -139,14 +136,42 @@ xnode_f=[xf' yf' zeros(length(xf),1)];
 icone_s= [ [1:length(xs)-1]' , [2:length(xs)]' ];
 icone_f= [ [1:length(xf)-1]' , [2:length(xf)]' ];
 
-u_s= 0.01*cos( 2*pi.*xs) ;
-p_f= 0.01*cos( 2*pi.*xf) ;
+%u_s= 0.01*cos( 2*pi.*xs) ;
+%p_f= 0.01*cos( 2*pi.*xf) ;
+
+%% Para aplicar presiones y desplazamientos como funcion escalon
+u_s_escalon=zeros(1,2^k * 5 + 1);
+p_f_escalon=zeros(1,2^k * 26 + 1);
+for i=1:length(xs)
+  if(xs(i)<0)
+    u_s_escalon(i)=0;
+  else
+    u_s_escalon(i)=1;
+  end
+end
+
+for i=1:length(xf)
+  if(xf(i)<0)
+    p_f_escalon(i)=0;
+  else
+    p_f_escalon(i)=1;
+  end
+end
+
+state_s = [ [1:length(xs)]' , u_s_escalon' ];
+state_f = [ [1:length(xf)]' , ones(length(xf),1)*(-1)  ];
+
+%state_s = [ [1:length(xs)]' , ones(length(xs),1)*(-1) ];
+%state_f = [ [1:length(xf)]' , p_f_escalon'];
+
+
+%% Para aplicar presiones y desplazamientos del paper de De Boer
 
 %state_s = [ [1:length(xs)]' , u_s' ];
 %state_f = [ [1:length(xf)]' , ones(length(xf),1)*(-1)  ];
 
-state_s = [ [1:length(xs)]' , ones(length(xs),1)*(-1) ];
-state_f = [ [1:length(xf)]' , p_f'];
+%state_s = [ [1:length(xs)]' , ones(length(xs),1)*(-1) ];
+%state_f = [ [1:length(xf)]' , p_f'];
 
 ## Fin de test de Boer.
 
